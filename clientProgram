@@ -1,24 +1,146 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Scanner;
 
 public class clientProgram {
 
-	public static void main(String[] args) {
+	static Scanner scanner = new Scanner(System.in);
+	public static String host = "jdbc:mysql://cisvm-winsrv-mysql1.unfcsd.unf.edu:3307/group1";
+	//String host2 = "jdbc:mysql://localhost:3306/group1";
+	public static String username = "n01360231";
+	public static String password = "unfbryce102799!";
+	public static String userEmail = null;
+	public static String userPass = null;
+	public static String adminEmail = null;
+	public static String adminPass = null;
+	public static int choice = 0;
+	static public String userString;
+	public static  int idArray[] = {};
+	
+	public static void main(String[] args) throws ClassNotFoundException {
 		
-		String host = null;
-		String username = null;
-		String password = null;
+		
+		Class.forName("com.mysql.cj.jdbc.Driver"); 
 		
 		try {
-			Connection con = DriverManager.getConnection( host, username, password );
+			Connection con = DriverManager.getConnection(host, username, password);
+			System.out.println("Connected to database");
+			MainMenu();
+			
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			System.out.println("Error. Not connected to database.");
 			e.printStackTrace();
 		}
 
 
 
 	}
+	
+	public static void MainMenu() {
+		System.out.println("Enter 1 for User Access and Enter 2 for Admin Access");
+		choice = scanner.nextInt();
+		
+		if (choice == 1) {
+			UserAccess();
+		}
+		
+	}
+	public static void UserAccess() {
+		System.out.println("Enter 1 to Search\n"
+				+  "Enter 2 to Checkout(rent)/buy\n"
+				+  "Enter 3 for Returns\n"
+				+  "Enter 4 to Check/Pay Balance and Late Fees\n"
+				+  "Enter 5 to Log In\n"
+				+  "Enter 6 to Create Account\n"
+				+  "Enter 7 to Return");
 
-}
+		choice = scanner.nextInt();
+		
+		switch (choice) {
+		case 1: 
+			Search();
+			break;
+		case 2: 
+			Cart();
+			break;
+		case 3:
+			Return();
+			break;
+		case 4:
+			Balance();
+			break;
+		case 5:
+			LogIn();
+			break;
+		case 6: 
+			CreateAccount();
+		case 7:
+			
+		}
+		
+	}// end UserAccess
+	
+	public static void Search() {
+		System.out.print("Search by title, genre or author:\n");
+		userString = scanner.nextLine();
+		/* SQL code here to search tables for books by input.
+		 * Allow them to add items to shopping cart */
+	}// end Search()
+	
+	public static void Cart() {
+		//SELECT
+		//lets customers and users look at their current shopping cart.
+		//They can rent/purchase from here and also remove
+		System.out.println("If you would like to remove an item enter 1\n"
+						 + "If you would like to rent/purchase an item enter 2\n"
+						 + "To return to menu enter 3\n");
+		choice = scanner.nextInt();
+			if (choice == 1) {
+				System.out.println("Enter the ID of item you would like to remove or 0 to return to cart.");
+				choice = scanner.nextInt();
+			}
+			
+			else if (choice == 2) {
+				System.out.println("Enter the IDs separated by a space of item you would like to rent/purchase");
+				choice = scanner.nextInt();
+				/*
+				 * for loop to turn each id into a separate element in idArray[]
+				 * that way we can use each element to create orders from the cart
+				 */
+				// ask for payment method if required to go this deep
+				// if user has a payment method stored on account don't ask
+				//print a receipt
+				Cart();
+			}
+			
+			else if (choice == 3) {
+				
+				UserAccess();
+			}
+			
+			
+	}// end Cart()
+	
+	public static void Return () {
+		/*
+		 * Code to return rentals
+		 */
+	}
+	
+	public static void Balance () {
+		
+		//print balance and late fees
+		//let user pay one or both
+	}
+	
+	public static void LogIn() {
+		// code to log in
+	}
+	
+	public static void CreateAccount () {
+		//code to create account
+	}
+}//end clientProgram
