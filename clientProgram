@@ -8,8 +8,8 @@ public class clientProgram {
 	static Scanner scanner = new Scanner(System.in);
 	public static String host = "jdbc:mysql://cisvm-winsrv-mysql1.unfcsd.unf.edu:3307/group1";
 	//String host2 = "jdbc:mysql://localhost:3306/group1";
-	public static String username = "n01360231";
-	public static String password = "unfbryce102799!";
+	public static String username = "";
+	public static String password = "";
 	public static String userEmail = null;
 	public static String userPass = null;
 	public static String adminEmail = null;
