@@ -24,7 +24,6 @@ public class DatabaseClass {
 	
 	public static void main(String[] args) throws ClassNotFoundException {
 		
-		
 		Class.forName("com.mysql.cj.jdbc.Driver"); 
 		
 		try {
@@ -165,3 +164,23 @@ String query = "SELECT * FROM `shopping cart`";
 			
 			
 	}// end Cart()
+	
+	public static void Return () {
+		/*
+		 * Code to return rentals
+		 */
+	}
+	
+	public static void Balance () {
+		//print balance and late fees
+		//let user pay one or both
+	}
+	
+	public static void LogIn() {
+		// code to log in
+	}
+	
+	public static void CreateAccount () {
+		//code to create account
+	}
+}//end clientProgram
