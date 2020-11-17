@@ -36,9 +36,7 @@ public class clientProgram {
 			System.out.println("Error. Not connected to database.");
 			e.printStackTrace();
 		}
-
-
-
+		
 	}
 	
 	public static void MainMenu() {
@@ -48,8 +46,62 @@ public class clientProgram {
 		if (choice == 1) {
 			UserAccess();
 		}
+		else if (choice == 2){
+			AdminAccess();
+		}
+		else {
+		 	MainMenu();
+		}
 		
 	}
+	public static void AdminAccess() {
+		System.out.println("Enter 1 to Locate Title\n"
+				+  "Enter 2 to Update Inventory\n"
+				+  "Enter 3 to Check User Balance and Late Fees\n"
+				+  "Enter 4 to Generate Reports\n"
+				+  "Enter 5 to Return");
+
+		choice = scanner.nextInt();
+		
+		switch (choice) {
+		case 1: 
+			AdminSearch();
+			break;
+		case 2: 
+			UpdateInventory();
+			break;
+		case 3:
+			CheckUserBal();
+			break;
+		case 4:
+			GenerateReports() ;
+			break;
+		case 5:
+			 MainMenu();
+			break;
+		default:
+			System.out.println("Not A Valid Option");
+			AdminAccess();			
+			break;
+		}
+	}//end AdminAccess
+	
+	public static void AdminSearch() {
+		
+	}
+	
+	public static void UpdateInventory() {
+		
+	}
+	
+	public static void CheckUserBal() {
+		
+	}
+	
+	public static void GenerateReports() {
+		
+	}
+	
 	public static void UserAccess() {
 		System.out.println("Enter 1 to Search\n"
 				+  "Enter 2 to Checkout(rent)/buy\n"
@@ -86,9 +138,7 @@ public class clientProgram {
 		default:
 			System.out.println("Please enter a correct value");
 			UserAccess();
-		}
-		
-		
+		}	
 		
 	}// end UserAccess
 	
