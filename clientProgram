@@ -1,15 +1,19 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class clientProgram {
+public class DatabaseClass {
 
 	static Scanner scanner = new Scanner(System.in);
 	public static String host = "jdbc:mysql://cisvm-winsrv-mysql1.unfcsd.unf.edu:3307/group1";
 	//String host2 = "jdbc:mysql://localhost:3306/group1";
-	public static String username = "";
-	public static String password = "";
+	public static String username = "n01360231";
+	public static String password = "unfbryce102799!";
 	public static String userEmail = null;
 	public static String userPass = null;
 	public static String adminEmail = null;
@@ -86,14 +90,52 @@ public class clientProgram {
 	public static void Search() {
 		System.out.print("Search by title, genre or author:\n");
 		userString = scanner.nextLine();
-		/* SQL code here to search tables for books by input.
-		 * Allow them to add items to shopping cart */
+		// SQL code here to search tables for books by input.
+		String query = "SELECT * FROM genre";
+		
+		try (Connection con = DriverManager.getConnection(host, username, password);
+                PreparedStatement pst = con.prepareStatement(query);
+                ResultSet rs = pst.executeQuery()) {
+			
+			while (rs.next()) {
+				
+                System.out.println(rs.getString(2));
+            }
+			
+			
+			
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+			
+		
+		// Allow them to add items to shopping cart 
 	}// end Search()
 	
 	public static void Cart() {
 		//SELECT
 		//lets customers and users look at their current shopping cart.
 		//They can rent/purchase from here and also remove
+		
+String query = "SELECT * FROM `shopping cart`";
+		
+		try (Connection con = DriverManager.getConnection(host, username, password);
+                PreparedStatement pst = con.prepareStatement(query);
+                ResultSet rs = pst.executeQuery()) {
+			
+			while (rs.next()) {
+				
+                System.out.println(rs.getInt(2)+ "|");
+                System.out.println(rs.getString(3)+ "|");
+                System.out.println(rs.getInt(4));
+                System.out.println(rs.getDouble(6));
+            }
+			
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
 		System.out.println("If you would like to remove an item enter 1\n"
 						 + "If you would like to rent/purchase an item enter 2\n"
 						 + "To return to menu enter 3\n");
@@ -123,24 +165,3 @@ public class clientProgram {
 			
 			
 	}// end Cart()
-	
-	public static void Return () {
-		/*
-		 * Code to return rentals
-		 */
-	}
-	
-	public static void Balance () {
-		
-		//print balance and late fees
-		//let user pay one or both
-	}
-	
-	public static void LogIn() {
-		// code to log in
-	}
-	
-	public static void CreateAccount () {
-		//code to create account
-	}
-}//end clientProgram
