@@ -7,7 +7,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DatabaseClass {
+public class clientProgram {
 
 	static Scanner scanner = new Scanner(System.in);
 	public static String host = "jdbc:mysql://cisvm-winsrv-mysql1.unfcsd.unf.edu:3307/group1";
@@ -16,8 +16,7 @@ public class DatabaseClass {
 	public static String password = "";
 	public static String userEmail = null;
 	public static String userPass = null;
-	public static String adminEmail = null;
-	public static String adminPass = null;
+	public static String adminPass = "X12BoY67LI2xQ";
 	public static int choice = 0;
 	static public String userString;
 	public static  int idArray[] = {};
@@ -80,9 +79,16 @@ public class DatabaseClass {
 			break;
 		case 6: 
 			CreateAccount();
+			break;
 		case 7:
-			
+			MainMenu();
+			break;
+		default:
+			System.out.println("Please enter a correct value");
+			UserAccess();
 		}
+		
+		
 		
 	}// end UserAccess
 	
@@ -104,7 +110,7 @@ public class DatabaseClass {
 			
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 			
@@ -132,7 +138,7 @@ String query = "SELECT * FROM `shopping cart`";
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.println("If you would like to remove an item enter 1\n"
@@ -166,9 +172,18 @@ String query = "SELECT * FROM `shopping cart`";
 	}// end Cart()
 	
 	public static void Return () {
-		/*
-		 * Code to return rentals
-		 */
+		// DISPLAY Books currently checked out with ID 
+		System.out.println("Enter ID of book you would like to return or 0 to return to User Menu");
+		choice = scanner.nextInt();
+		if (choice == 0) {
+			UserAccess();
+		}
+		//if statement to make sure choice == one of the IDS
+		//if choice == ID then set return value to true or 1 then call Return();
+		else {
+			System.out.println("Enter correct ID");
+			Return();
+		}
 	}
 	
 	public static void Balance () {
@@ -178,9 +193,54 @@ String query = "SELECT * FROM `shopping cart`";
 	
 	public static void LogIn() {
 		// code to log in
+		System.out.println("Email: ");
+		userEmail = scanner.nextLine();
+		//if userEmail != an email in database then prompt user to enter again
+		//else
+		System.out.println("Password: ");
+		userPass = scanner.nextLine();
+		//if userPassword != an email in database then prompt user to enter again
+		
 	}
 	
 	public static void CreateAccount () {
+		String firstName;
+		String lastName;
+		String confirmEmail;
+		String confirmPass;
+		
 		//code to create account
+		System.out.println("Enter First Name");
+			firstName = scanner.nextLine();
+		System.out.println("Enter Last Name");
+			lastName = scanner.nextLine();
+		System.out.println("Enter Email");
+			userEmail = scanner.nextLine();
+		System.out.println("Confirm Email");
+			confirmEmail = scanner.nextLine();
+		while (confirmEmail != userEmail)
+		{
+			System.out.println("One of your values did not match.");
+			System.out.println("Enter Email");
+			userEmail = scanner.nextLine();
+			
+			System.out.println("Confirm Email");
+			confirmEmail = scanner.nextLine();
+		}
+		System.out.println("Enter Password");
+			userPass = scanner.nextLine();
+		System.out.println("Confirm Password");	
+			confirmPass = scanner.nextLine();
+			
+		while (confirmPass != userPass) {
+			
+			System.out.println("One of your values did not match.");
+			System.out.println("Enter Password");
+				userPass = scanner.nextLine();
+			System.out.println("Confirm Password");	
+				confirmPass = scanner.nextLine();
+		}
+			
+		
 	}
 }//end clientProgram
