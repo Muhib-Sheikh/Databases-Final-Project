@@ -7,7 +7,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DatabaseClass {
+public class clientProgram {
 
 	static Scanner scanner = new Scanner(System.in);
 	public static String host = "jdbc:mysql://cisvm-winsrv-mysql1.unfcsd.unf.edu:3307/group1";
@@ -131,7 +131,7 @@ public class DatabaseClass {
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.println();
@@ -226,8 +226,11 @@ public static void Search() {
 				"INNER JOIN `format` on format.`FormatID` = books.FormatID\r\n" + 
 				"INNER JOIN `book format` on `book format`.BookTypeID = format.`BookTypeID`\r\n" + 
 				"INNER JOIN authors on authors.AuthorID = `book authors`.AuthorID\r\n" + 
-				"WHERE authors.FirstName LIKE \'" + userString + "\' OR authors.LastName LIKE \'" + userString + "\' OR books.Title LIKE \'"
-				+ userString + "\' OR books.ISBN LIKE \'" + userString + "\' OR genre.GenreName LIKE \'" + userString + "\'" +
+				"WHERE authors.FirstName LIKE \'%" + userString + "%\' OR " +
+				"authors.LastName LIKE \'%" + userString + "%\' OR " +
+				"books.Title LIKE \'%" + userString + "%\' OR " +
+			    	"books.ISBN LIKE \'" + userString + "\' OR " +
+				"genre.GenreName LIKE \'%" + userString + "%\'" +
 				"GROUP BY books.Title;";
 			
 		try (Connection con = DriverManager.getConnection(host, username, password);
@@ -236,7 +239,7 @@ public static void Search() {
 			String arr[] = {};
 			String var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11;
 			
-			System.out.printf("%-40s %-10s %-15s %-15s %-10s %-14s %-30s %-10s %-8s %-15s %-10s %-1s\n","Title","First Name","Last Name","ISBN","Price","Rental Price","Genre","Publisher","Format","Condition","Inv", "");
+			System.out.printf("%-90s %-15s %-15s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s %-1s\n","Title","First Name","Last Name","ISBN","Price","Rental Price","Genre","Publisher","Condition","Format","Inv", "");
 			while (rs.next()) {
 				
 				var1 = rs.getString(1);
@@ -250,12 +253,12 @@ public static void Search() {
 				var9 = rs.getString(9);
 				var10 = rs.getString(10);
 				var11 = rs.getString(11);
-				System.out.printf("%-40s %-10s %-15s %-15s %-10s %-14s %-30s %-10s %-8s %-15s %-10s\n", var1,  var2,  var3,  var4,  var5,  var6,  var7,  var8,  var9,  var10,  var11);
+				System.out.printf("%-90s %-15s %-15s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s\n", var1,  var2,  var3,  var4,  var5,  var6,  var7,  var8,  var9,  var10,  var11);
 				
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.println();
@@ -304,7 +307,7 @@ String query = "SELECT * FROM `shopping cart`";
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.println("If you would like to remove an item enter 1\n"
