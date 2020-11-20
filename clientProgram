@@ -218,7 +218,7 @@ public static void Search() {
 		//System.out.println(userString);
 		//System.out.println("WHERE authors.FirstName LIKE \'" + userString + "\' OR authors.LastName LIKE \'" + userString + "\' OR books.Title LIKE \'" + userString + "\' OR books.ISBN LIKE \'" + userString + "\' OR genre.GenreName LIKE \'" + userString + "\'");
 		// SQL code here to search tables for books by input.
-		String query = "SELECT Title, authors.FirstName, authors.LastName , ISBN, Price, RentalPrice, genre.GenreName, publishers.PublisherName, format.`New/used`, `book format`.BookType , Inventory\r\n" + 
+		String query = "SELECT Title, authors.Name, ISBN, Price, RentalPrice, genre.GenreName, publishers.PublisherName, format.`New/used`, `book format`.BookType , Inventory\r\n" + 
 				"FROM books\r\n" + 
 				"INNER JOIN `book authors` on `book authors`.BookID = books.BookID\r\n" + 
 				"INNER JOIN genre on genre.GenreID = books.GenreID\r\n" + 
@@ -226,10 +226,9 @@ public static void Search() {
 				"INNER JOIN `format` on format.`FormatID` = books.FormatID\r\n" + 
 				"INNER JOIN `book format` on `book format`.BookTypeID = format.`BookTypeID`\r\n" + 
 				"INNER JOIN authors on authors.AuthorID = `book authors`.AuthorID\r\n" + 
-				"WHERE authors.FirstName LIKE \'%" + userString + "%\' OR " +
-				"authors.LastName LIKE \'%" + userString + "%\' OR " +
+				"WHERE authors.Name LIKE \'%" + userString + "%\' OR " +
 				"books.Title LIKE \'%" + userString + "%\' OR " +
-			    	"books.ISBN LIKE \'" + userString + "\' OR " +
+			    "books.ISBN LIKE \'" + userString + "\' OR " +
 				"genre.GenreName LIKE \'%" + userString + "%\'" +
 				"GROUP BY books.Title;";
 			
@@ -237,9 +236,9 @@ public static void Search() {
                 PreparedStatement pst = con.prepareStatement(query);
                 ResultSet rs = pst.executeQuery()) {
 			String arr[] = {};
-			String var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11;
+			String var1, var2, var3, var4, var5, var6, var7, var8, var9, var10;
 			
-			System.out.printf("%-90s %-15s %-15s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s %-1s\n","Title","First Name","Last Name","ISBN","Price","Rental Price","Genre","Publisher","Condition","Format","Inv", "");
+			System.out.printf("%-90s %-30s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s %-1s\n","Title","Name","ISBN","Price","Rental Price","Genre","Publisher","Condition","Format","Inv", "");
 			while (rs.next()) {
 				
 				var1 = rs.getString(1);
@@ -252,8 +251,7 @@ public static void Search() {
 				var8 = rs.getString(8);
 				var9 = rs.getString(9);
 				var10 = rs.getString(10);
-				var11 = rs.getString(11);
-				System.out.printf("%-90s %-15s %-15s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s\n", var1,  var2,  var3,  var4,  var5,  var6,  var7,  var8,  var9,  var10,  var11);
+				System.out.printf("%-90s %-30s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s\n", var1,  var2,  var3,  var4,  var5,  var6,  var7,  var8,  var9,  var10);
 				
             }
 			
