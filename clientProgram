@@ -3,11 +3,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class clientProgram {
+public class DatabaseClass {
 
 	static Scanner scanner = new Scanner(System.in);
 	public static String host = "jdbc:mysql://cisvm-winsrv-mysql1.unfcsd.unf.edu:3307/group1";
@@ -131,7 +132,7 @@ public class clientProgram {
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.println();
@@ -160,7 +161,7 @@ public class clientProgram {
 	}//end AdminSearch
 	
 	public static void UpdateInventory() {
-		
+
 	}
 	
 	public static void CheckUserBal() {
@@ -256,11 +257,11 @@ public static void Search() {
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.println();
-		System.out.println("1 to Continue Searching\n" + "2 to Return to Menu\n");		
+		System.out.println("1 to Continue Searching\n"+ "2 to Add to Cart" + "3 to Return to Menu\n");		
 		choice = scan.nextInt();
 		if(choice == 1) {
 			Search();
@@ -269,7 +270,7 @@ public static void Search() {
 			UserAccess();
 		}
 		else {
-			while(choice != 1 || choice != 2) {
+			while(choice != 1 || choice != 2 || choice != 3) {
 				System.out.println("Invalid Option!\n");
 				System.out.println("1 to Continue Searching\n" + "2 to Return to Menu\n");
 				choice = scan.nextInt();
@@ -281,6 +282,7 @@ public static void Search() {
 				}
 			}
 		}
+		
 				
 		// Allow them to add items to shopping cart 
 	}// end Search()
@@ -305,7 +307,7 @@ String query = "SELECT * FROM `shopping cart`";
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.println("If you would like to remove an item enter 1\n"
@@ -370,6 +372,7 @@ String query = "SELECT * FROM `shopping cart`";
 	}
 	
 	public static void CreateAccount () {
+		Scanner scan = new Scanner(System.in);
 		String firstName;
 		String lastName;
 		String confirmEmail;
@@ -377,36 +380,50 @@ String query = "SELECT * FROM `shopping cart`";
 		
 		//code to create account
 		System.out.println("Enter First Name");
-			firstName = scanner.nextLine();
+			firstName = scan.nextLine();
 		System.out.println("Enter Last Name");
-			lastName = scanner.nextLine();
+			lastName = scan.nextLine();
 		System.out.println("Enter Email");
-			userEmail = scanner.nextLine();
+			userEmail = scan.nextLine();
 		System.out.println("Confirm Email");
-			confirmEmail = scanner.nextLine();
-		while (confirmEmail != userEmail)
+			confirmEmail = scan.nextLine();
+		while (confirmEmail.compareToIgnoreCase(userEmail) != 0)
 		{
 			System.out.println("One of your values did not match.");
 			System.out.println("Enter Email");
-			userEmail = scanner.nextLine();
+			userEmail = scan.nextLine();
 			
 			System.out.println("Confirm Email");
-			confirmEmail = scanner.nextLine();
+			confirmEmail = scan.nextLine();
 		}
 		System.out.println("Enter Password");
-			userPass = scanner.nextLine();
+			userPass = scan.nextLine();
 		System.out.println("Confirm Password");	
-			confirmPass = scanner.nextLine();
+			confirmPass = scan.nextLine();
 			
-		while (confirmPass != userPass) {
+		while (confirmPass.compareToIgnoreCase(userPass) != 0) {
 			
 			System.out.println("One of your values did not match.");
 			System.out.println("Enter Password");
-				userPass = scanner.nextLine();
+				userPass = scan.nextLine();
 			System.out.println("Confirm Password");	
-				confirmPass = scanner.nextLine();
+				confirmPass = scan.nextLine();
 		}
+		
+	String query = "INSERT INTO `group1`.`users` (`FirstName`, `LastName`, `Email`, `Password`) VALUES ('"+ firstName +"', '"+ lastName +"', '" + userEmail + "', '" + userPass +"');";
+		
+		try  (Connection con = DriverManager.getConnection(host, username, password)) {
+		
+            Statement s = con.createStatement();
+            s.executeUpdate(query);
+            System.out.println("Account Created!");
 			
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		
+		UserAccess();
 		
 	}
 }//end clientProgram
