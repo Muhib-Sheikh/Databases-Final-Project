@@ -8,7 +8,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DatabaseClass {
+public class clientProgram {
 
 	static Scanner scanner = new Scanner(System.in);
 	public static String host = "jdbc:mysql://cisvm-winsrv-mysql1.unfcsd.unf.edu:3307/group1";
@@ -17,8 +17,8 @@ public class DatabaseClass {
 	public static String password = "V22d9569";
 	public static String userEmail = null;
 	public static String userPass = null;
-	public static String adminEmail = null;
 	public static String adminPass = null;
+	public static String ISBN;
 	public static int choice = 0;
 	static public String userString;
 	public static  int idArray[] = {};
@@ -132,7 +132,7 @@ public class DatabaseClass {
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.println();
@@ -257,22 +257,27 @@ public static void Search() {
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
+		
 		System.out.println();
-		System.out.println("1 to Continue Searching\n"+ "2 to Add to Cart" + "3 to Return to Menu\n");		
+		System.out.println("1 to Continue Searching\n"+ "2 to Add to Cart\n" + "3 to Return to Menu\n");		
 		choice = scan.nextInt();
 		if(choice == 1) {
 			Search();
 		}
 		else if(choice == 2) {
+			addToCart();
+		}
+		
+		else if (choice == 3) {
 			UserAccess();
 		}
 		else {
 			while(choice != 1 || choice != 2 || choice != 3) {
 				System.out.println("Invalid Option!\n");
-				System.out.println("1 to Continue Searching\n" + "2 to Return to Menu\n");
+				System.out.println("1 to Continue Searching\n" + "2 to Return to Menu\n" + "3 to Return to Menu\n");
 				choice = scan.nextInt();
 				if(choice == 1) {
 					Search();
@@ -286,6 +291,66 @@ public static void Search() {
 				
 		// Allow them to add items to shopping cart 
 	}// end Search()
+	
+
+
+	public static void addToCart() {
+		Scanner scan = new Scanner(System.in);
+		
+		if (userEmail == null && userPass == null) {
+			System.out.println("Would you like to log in or create an account first?\n"
+							+ "Enter 1 to create account\n "
+							+ "Enter 2 to log in.\n"
+							+ "Enter 3 to continue as guest");
+			choice = scanner.nextInt();
+			if (choice == 1) {
+				CreateAccount();
+				
+			}
+			
+			else if (choice == 2) {
+				LogIn();
+			}
+			
+			else if (choice == 3) {
+				userEmail = "guest";
+				userPass = "guest";
+			}
+			
+			else  {
+				while (choice != 1 || choice != 2 || choice !=3) {
+					
+				}
+			}
+		}
+		
+		System.out.println("Enter ISBN of book you would like to add.");
+		ISBN = scan.nextLine();
+		/*
+		 * QUERY CODE TO FIND BOOKID BY ISBN AND THEN UPDATE BOOK
+		 * 
+		 * 
+		 * try  (Connection con = DriverManager.getConnection(host, username, password)) {
+			
+            Statement s = con.createStatement();
+            s.executeUpdate(query);
+            System.out.println("Account Created!");
+			
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		 */
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	}// end addToCart()
 	
 	public static void Cart() {
 		//SELECT
@@ -307,7 +372,7 @@ String query = "SELECT * FROM `shopping cart`";
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.println("If you would like to remove an item enter 1\n"
@@ -385,6 +450,7 @@ String query = "SELECT * FROM `shopping cart`";
 			lastName = scan.nextLine();
 		System.out.println("Enter Email");
 			userEmail = scan.nextLine();
+			CheckEmail();
 		System.out.println("Confirm Email");
 			confirmEmail = scan.nextLine();
 		while (confirmEmail.compareToIgnoreCase(userEmail) != 0)
@@ -419,11 +485,52 @@ String query = "SELECT * FROM `shopping cart`";
             System.out.println("Account Created!");
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
-		
+		//scan.close();
 		UserAccess();
 		
-	}
+	}// end Create Account
+	
+	public static void CheckEmail() {
+		Scanner scan1 = new Scanner(System.in);
+		//int var = Integer.parseInt(scan1.nextLine());
+		String var1;
+		String query1 = "SELECT Email " + 
+				"FROM users;";
+			try  (Connection con = DriverManager.getConnection(host, username, password);
+	
+						PreparedStatement pst = con.prepareStatement(query1);
+						ResultSet rs = pst.executeQuery()) {
+	
+					while (rs.next()) {
+						var1 = rs.getString(1);
+							if (var1.compareToIgnoreCase(userEmail) == 0) {
+									System.out.println("The email you entered is already in use. Please enter another.\n"
+													+ "Enter 1 to continue or Enter 2 to Log In");
+														choice = Integer.parseInt(scan1.nextLine());
+				
+														if (choice == 1) {
+															System.out.print("Enter another email: ");
+															userEmail = scan1.nextLine();
+															CheckEmail();
+					
+														} // end second if
+														
+														else if (choice == 2) {
+															LogIn();
+														}
+							}// end first if
+		
+					}//end while
+			//scan.close();
+			}catch(SQLException ex) {
+				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				lgr.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		
+	}// end Check email
+	
+	
 }//end clientProgram
