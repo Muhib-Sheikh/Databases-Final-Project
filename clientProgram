@@ -159,6 +159,8 @@ public class DatabaseClass {
 	}//end AdminSearch
 	
 	public static void UpdateInventory() {
+	
+	
 
 	}
 	
