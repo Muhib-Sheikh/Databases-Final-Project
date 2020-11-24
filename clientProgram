@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Random;
 
-public class clientProgram {
+public class DatabaseClass {
 
 	static Scanner scanner = new Scanner(System.in);
 	public static String host = "jdbc:mysql://cisvm-winsrv-mysql1.unfcsd.unf.edu:3307/group1";
@@ -17,6 +17,7 @@ public class clientProgram {
 	public static String username = "n01442744";
 	public static String password = "V22d9569";
 	public static String userEmail = null;
+	public static String userID = null;
 	public static String guest = null;
 	public static String userPass = null;
 	public static String adminPass = null;
@@ -25,6 +26,8 @@ public class clientProgram {
 	static public String userString;
 	public static  int idArray[] = {};
 	public static boolean signedIn = false;
+	public static double subtotal;
+	public static String tempUserID;
 
 	
 	public static void main(String[] args) throws ClassNotFoundException {
@@ -33,7 +36,7 @@ public class clientProgram {
 			
 	}
 	
-	public static void MainMenu() { //FINISHED
+	public static void MainMenu() {
 		System.out.println("Enter 1 for User Access and Enter 2 for Admin Access");
 		choice = scanner.nextInt();
 		
@@ -51,9 +54,7 @@ public class clientProgram {
 		
 	}
 	
-	
-	/********ADMIN STUFF**********/
-	public static void AdminAccess() { //FINISHED
+	public static void AdminAccess() {
 		System.out.println("Enter 1 to Locate Title\n"
 				+  "Enter 2 to Update Inventory\n"
 				+  "Enter 3 to Check User Balance and Late Fees\n"
@@ -84,7 +85,6 @@ public class clientProgram {
 			break;
 		}
 	}
-	
 	public static void AdminSearch() {
 		Scanner scan = new Scanner(System.in);
 		System.out.print("Search by title, genre or author:\n");
@@ -92,7 +92,7 @@ public class clientProgram {
 		//System.out.println(userString);
 		//System.out.println("WHERE authors.FirstName LIKE \'" + userString + "\' OR authors.LastName LIKE \'" + userString + "\' OR books.Title LIKE \'" + userString + "\' OR books.ISBN LIKE \'" + userString + "\' OR genre.GenreName LIKE \'" + userString + "\'");
 		// SQL code here to search tables for books by input.
-		String query = "SELECT Title, authors.Name, ISBN, Price, RentalPrice, genre.GenreName, publishers.PublisherName, format.`New/used`, `book format`.BookType , Inventory, DisplayArea, NewRelease \r\n" + 
+		String query = "SELECT Title, authors.FirstName, authors.LastName , ISBN, Price, RentalPrice, genre.GenreName, publishers.PublisherName, format.`New/used`, `book format`.BookType , Inventory\r\n" + 
 				"FROM books\r\n" + 
 				"INNER JOIN `book authors` on `book authors`.BookID = books.BookID\r\n" + 
 				"INNER JOIN genre on genre.GenreID = books.GenreID\r\n" + 
@@ -100,19 +100,17 @@ public class clientProgram {
 				"INNER JOIN `format` on format.`FormatID` = books.FormatID\r\n" + 
 				"INNER JOIN `book format` on `book format`.BookTypeID = format.`BookTypeID`\r\n" + 
 				"INNER JOIN authors on authors.AuthorID = `book authors`.AuthorID\r\n" + 
-				"WHERE authors.Name LIKE \'%" + userString + "%\' OR " +
-				"books.Title LIKE \'%" + userString + "%\' OR " +
-			    "books.ISBN LIKE \'" + userString + "\' OR " +
-				"genre.GenreName LIKE \'%" + userString + "%\'" +
-				"GROUP BY books.AuthorID;";
+				"WHERE authors.FirstName LIKE \'" + userString + "\' OR authors.LastName LIKE \'" + userString + "\' OR books.Title LIKE \'"
+				+ userString + "\' OR books.ISBN LIKE \'" + userString + "\' OR genre.GenreName LIKE \'" + userString + "\'" +
+				"GROUP BY books.Title;";
 			
 		try (Connection con = DriverManager.getConnection(host, username, password);
                 PreparedStatement pst = con.prepareStatement(query);
                 ResultSet rs = pst.executeQuery()) {
 			String arr[] = {};
-			String var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11, var12, var13;
+			String var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11;
 			
-			System.out.printf("%-90s %-30s %-15s %-10s %-14s %-30s %-20s %-8s %-15s %-10s %-15s %-20s %-1s\n","Title","Name","ISBN","Price","Rental Price","Genre","Publisher","Format","Condition","Inv","Display Area", "New Release", "");
+			System.out.printf("%-40s %-10s %-15s %-15s %-10s %-14s %-30s %-10s %-8s %-15s %-10s %-1s\n","Title","First Name","Last Name","ISBN","Price","Rental Price","Genre","Publisher","Format","Condition","Inv", "");
 			while (rs.next()) {
 				
 				var1 = rs.getString(1);
@@ -126,26 +124,13 @@ public class clientProgram {
 				var9 = rs.getString(9);
 				var10 = rs.getString(10);
 				var11 = rs.getString(11);
-					if (var11 == "1") {
-						var11 = "No";
-					}
-					else {
-						var11 = "Yes";
-					}
-				var12 = rs.getString(12);
-				if (var12 == "1") {
-					var12 = "NEW RELEASE";
-				}
-				else {
-					var12 = "NOT NEW";
-				}
-				System.out.printf("%-90s %-30s %-15s %-10s %-14s %-30s %-20s %-8s %-15s %-10s %-15s %-20s\n", var1,  var2,  var3,  var4,  var5,  var6,  var7,  var8,  var9,  var10,  var11, var12);
+				System.out.printf("%-40s %-10s %-15s %-15s %-10s %-14s %-30s %-10s %-8s %-15s %-10s\n", var1,  var2,  var3,  var4,  var5,  var6,  var7,  var8,  var9,  var10,  var11);
 				
 				
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.println();
@@ -185,9 +170,7 @@ public class clientProgram {
 		
 	}
 	
-	
-	/********USER STUFF**********/
-	public static void UserAccess() { //FINISHED
+	public static void UserAccess() {
 		System.out.println("Enter 1 to Search\n"
 				+  "Enter 2 to Checkout(rent)/buy\n"
 				+  "Enter 3 for Returns\n"
@@ -226,7 +209,7 @@ public class clientProgram {
 		
 	}// end UserAccess
 	
-	public static void Search() {
+public static void Search() {
 		Scanner scan = new Scanner(System.in);
 		System.out.print("Search by title, genre or author:\n");
 		userString = scan.nextLine();
@@ -234,13 +217,12 @@ public class clientProgram {
 		//System.out.println("WHERE authors.FirstName LIKE \'" + userString + "\' OR authors.LastName LIKE \'" + userString + "\' OR books.Title LIKE \'" + userString + "\' OR books.ISBN LIKE \'" + userString + "\' OR genre.GenreName LIKE \'" + userString + "\'");
 		// SQL code here to search tables for books by input.
 		String query = "SELECT Title, authors.Name, ISBN, Price, RentalPrice, genre.GenreName, publishers.PublisherName, format.`New/used`, `book format`.BookType , Inventory\r\n" + 
-				"FROM books\r\n" + 
-				"INNER JOIN `book authors` on `book authors`.BookID = books.BookID\r\n" + 
+				"FROM books\r\n" +  
 				"INNER JOIN genre on genre.GenreID = books.GenreID\r\n" + 
 				"INNER JOIN publishers on publishers.PublisherID = books.PublisherID\r\n" + 
 				"INNER JOIN `format` on format.`FormatID` = books.FormatID\r\n" + 
 				"INNER JOIN `book format` on `book format`.BookTypeID = format.`BookTypeID`\r\n" + 
-				"INNER JOIN authors on authors.AuthorID = `book authors`.AuthorID\r\n" + 
+				"INNER JOIN authors on authors.AuthorID = `books`.AuthorID\r\n" + 
 				"WHERE authors.Name LIKE \'%" + userString + "%\' OR " +
 				"books.Title LIKE \'%" + userString + "%\' OR " +
 			    "books.ISBN LIKE \'" + userString + "\' OR " +
@@ -250,7 +232,6 @@ public class clientProgram {
 		try (Connection con = DriverManager.getConnection(host, username, password);
                 PreparedStatement pst = con.prepareStatement(query);
                 ResultSet rs = pst.executeQuery()) {
-			String arr[] = {};
 			String var1, var2, var3, var4, var5, var6, var7, var8, var9, var10;
 			
 			System.out.printf("%-90s %-30s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s %-1s\n","Title","Name","ISBN","Price","Rental Price","Genre","Publisher","Condition","Format","Inv", "");
@@ -271,7 +252,7 @@ public class clientProgram {
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -302,19 +283,20 @@ public class clientProgram {
 			}
 		}
 		
-				
+		System.out.println("userID: " + userID);		
 		// Allow them to add items to shopping cart 
 	}// end Search()
 	
 
-	public static void addToCart() { //FINISHED
+
+	public static void addToCart() {
 		Random rand = new Random();
 		int guestNumber = rand.nextInt(1000000);
 		Scanner scan = new Scanner(System.in);
 		
 		if (userEmail == null && userPass == null) {
 			System.out.println("Would you like to log in or create an account first?\n"
-							+ "Enter 1 to create account\n "
+							+ "Enter 1 to create account\n"
 							+ "Enter 2 to log in.\n"
 							+ "Enter 3 to continue as guest");
 			choice = scanner.nextInt();
@@ -363,7 +345,7 @@ public class clientProgram {
             System.out.println("Item added to cart!");
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		 
@@ -377,24 +359,35 @@ public class clientProgram {
 		//lets customers and users look at their current shopping cart.
 		//They can rent/purchase from here and also remove
 		
-String query = "SELECT * FROM `shopping cart`";
-		
+String query = "SELECT DISTINCT `shopping cart`.BookTitle, `shopping cart`.Quantity, `shopping cart`.Price, sum(`shopping cart`.Quantity * `shopping cart`.Price) \r\n" + 
+		"FROM `shopping cart`\r\n" + 
+		"WHERE UserID = '" + userID +"'\r\n" + 
+		"GROUP BY `shopping cart`.BookID "
+		+ "WITH ROLLUP;";
+System.out.println(query);
+System.out.println("userEmail: " + userEmail);
+System.out.printf("%-90s %-10s %-10s \n", "Title",  "Quantity",  "Price");
+	
 		try (Connection con = DriverManager.getConnection(host, username, password);
                 PreparedStatement pst = con.prepareStatement(query);
                 ResultSet rs = pst.executeQuery()) {
+			String title;
+			int quantity;
+			double price;	
 			
 			while (rs.next()) {
+				title = rs.getString(1);
+				quantity = rs.getInt(2);
+				price = rs.getDouble(3);
+				subtotal = rs.getDouble(4);
+				System.out.printf("%-90s %-10d %-10.2f \n", title,  quantity,  price);
 				
-                System.out.println(rs.getInt(2)+ "|");
-                System.out.println(rs.getString(3)+ "|");
-                System.out.println(rs.getInt(4));
-                System.out.println(rs.getDouble(6));
             }
-			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
+		System.out.printf("\t\t\t\t\t\t\t\t\t\t\t    Subtotal: %.2f\n", subtotal);
 		System.out.println("If you would like to remove an item enter 1\n"
 						 + "If you would like to rent/purchase an item enter 2\n"
 						 + "To return to menu enter 3\n");
@@ -423,6 +416,7 @@ String query = "SELECT * FROM `shopping cart`";
 			}
 			
 			
+			
 	}// end Cart()
 	
 	public static void Return () {
@@ -439,20 +433,19 @@ String query = "SELECT * FROM `shopping cart`";
 			Return();
 		}
 	}	
-	
 	public static void Balance () {
 		//print balance and late fees
 		//let user pay one or both
 	}
 	
-	public static void LogIn() { //FINISHED
+	public static void LogIn() {
 		Scanner scan1 = new Scanner(System.in);
 		String var1, var2, var3;
 		System.out.println("Email: ");
 		userEmail = scan1.nextLine();
 		//if userEmail != an email in database then prompt user to enter again
 		//else
-		String query1 = "SELECT Email, Password, FirstName " + 
+		String query1 = "SELECT Email, Password, FirstName, UserID " + 
 				"FROM users;";
 			try  (Connection con = DriverManager.getConnection(host, username, password);
 	
@@ -463,6 +456,8 @@ String query = "SELECT * FROM `shopping cart`";
 						var1 = rs.getString(1);
 						var2 = rs.getString(2);
 						var3 = rs.getString(3);
+						userID = rs.getString(4);
+						
 							if (var1.compareToIgnoreCase(userEmail) == 0) {
 								System.out.println("Password: ");
 								userPass = scan1.nextLine();
@@ -517,7 +512,7 @@ String query = "SELECT * FROM `shopping cart`";
 				}
 			//scan.close();
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		while(true) {
@@ -529,7 +524,7 @@ String query = "SELECT * FROM `shopping cart`";
 		
 	}
 	
-	public static void CreateAccount () { //FINISHED
+	public static void CreateAccount () {
 		Scanner scan = new Scanner(System.in);
 		String firstName;
 		String lastName;
@@ -578,7 +573,7 @@ String query = "SELECT * FROM `shopping cart`";
             System.out.println("Account Created!");
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		//scan.close();
@@ -586,7 +581,7 @@ String query = "SELECT * FROM `shopping cart`";
 		
 	}// end Create Account
 	
-	public static void createGuestAccount() { //FINISHED
+	public static void createGuestAccount() {
 		String query = "INSERT INTO `group1`.`users` (`FirstName`, `LastName`, `Email`, `Password`) VALUES ('guest', 'guest', '" + guest + "', 'guest' );";
 		try  (Connection con = DriverManager.getConnection(host, username, password)) {
 			
@@ -595,13 +590,13 @@ String query = "SELECT * FROM `shopping cart`";
             System.out.println("Guest Account Created!");
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 
 	}
 	
-	public static void CheckEmail() { //FINSIHED
+	public static void CheckEmail() {
 		Scanner scan1 = new Scanner(System.in);
 		//int var = Integer.parseInt(scan1.nextLine());
 		String var1;
@@ -634,7 +629,7 @@ String query = "SELECT * FROM `shopping cart`";
 					}//end while
 			//scan.close();
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		
