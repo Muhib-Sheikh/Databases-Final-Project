@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Random;
 
-public class DatabaseClass {
+public class clientProgram {
 
 	static Scanner scanner = new Scanner(System.in);
 	public static String host = "jdbc:mysql://cisvm-winsrv-mysql1.unfcsd.unf.edu:3307/group1";
@@ -32,6 +32,8 @@ public class DatabaseClass {
 	public static int publisherID = 0;
 	public static int authorID = 0;
 	public static int genreID = 0;
+	public static int formatID = 0;
+	public static int aisleNum = 0;
 	
 	public static void main(String[] args) throws ClassNotFoundException {
 	
@@ -140,7 +142,7 @@ public class DatabaseClass {
 		System.out.println("1 to Continue Searching\n" + "2 to Return to Menu\n");		
 		choice = scan.nextInt();
 		if(choice == 1) {
-			Search();
+			AdminSearch();
 		}
 		else if(choice == 2) {
 			AdminAccess();
@@ -226,7 +228,7 @@ public class DatabaseClass {
 		}
 		
 		else if(choice == 2) {
-			UserAccess();
+		AdminAccess();
 		}
 		
 		else if (choice == 3) {
@@ -397,19 +399,58 @@ public class DatabaseClass {
 		else if (choice == 3) {
 			AdminAccess();
 		}
-		
+		else {
+			System.out.println("Enter 1,2, or 3");
+			UpdateInventory();
+		}
 		UpdateInventory();
 	}//end UpdateInventory
 	
 	
 	public static void addTitle() {
 		Scanner scan = new Scanner(System.in);
-		String title;
+		Scanner id = new Scanner(System.in);
+		String title, isb;
+		int inv , pages, aisle, release;
+		double price, rentPrice;
+		
 		
 		System.out.println("Enter the title of book you would like to add:");
 		title = scan.nextLine();
+		System.out.println("Enter the number of pages of book");
+		pages = id.nextInt();
+		System.out.println("Enter the ISBN of book");
+		isb = scan.nextLine();
+		System.out.println("Enter the current amount of books in stock");
+		inv = id.nextInt();
+		System.out.println("Enter the purchase price of the book");
+		price = id.nextDouble();
+		System.out.println("Enter the rental price of the book");
+		rentPrice = id.nextDouble();
 		getAuthor();
 		displayGenre();
+		displayFormats();
+		getPublisher();
+		System.out.println("If this book is a new release (released in the past 2 months) enter 1\n"
+						  +"If this book was released more than 2 months ago enter 0\n");
+		release = id.nextInt();
+		
+		;
+		
+		
+		String query = "INSERT INTO books (Title, ISBN, Pages, Price, RentalPrice, GenreID, PublisherID, FormatID, Inventory, AuthorID, DisplayArea, NewRelease)\r\n" + 
+				   "VALUES ('"+ title +"', '"+ isb +"',"+ pages +","+ price +","+ rentPrice +"," + genreID +","+ publisherID +","+ formatID +","+ inv + ","+ authorID +","+ aisleNum +"," + release +");";
+		
+		try (Connection con = DriverManager.getConnection(host, username, password)){
+			Statement s = con.createStatement();
+            s.executeUpdate(query);
+            System.out.println("Title added\n");	
+	
+	}catch(SQLException ex) {
+	Logger lgr = Logger.getLogger(clientProgram.class.getName());
+	lgr.log(Level.SEVERE, ex.getMessage(), ex);
+}
+		
 		
 	}
 	
@@ -420,7 +461,7 @@ public class DatabaseClass {
 		System.out.println("Enter the first and last name of author or organization name");
 		authorName = scan1.nextLine();
 		
-		String query = "SELECT AuthorID, Name FROM authors;";
+		String query = "SELECT `AuthorID`, `Name` FROM authors;";
 		int authID;
 		String authName;
 		
@@ -483,7 +524,7 @@ public class DatabaseClass {
 		
 	public static void displayGenre() {
 		Scanner scan = new Scanner(System.in);
-		String query = "SELECT GenreID, GenreName FROM authors";
+		String query = "SELECT GenreID, GenreName FROM genre";
 		int genID;
 		String genName;
 		
@@ -491,11 +532,11 @@ public class DatabaseClass {
         PreparedStatement pst = con.prepareStatement(query);
         ResultSet rs = pst.executeQuery()) {
 			
-			System.out.printf("%-10s %-40s","Genre ID","Genre Name");
+			System.out.printf("%-10s %-40s\n","Genre ID","Genre Name");
 			while (rs.next()) {
 				genID = rs.getInt(1);
 				genName = rs.getString(2);
-				System.out.printf("%-10d %-40s", genID, genName);
+				System.out.printf("%-10d %-40s\n", genID, genName);
 			}
 	
 		}catch(SQLException ex) {
@@ -506,16 +547,55 @@ public class DatabaseClass {
 		System.out.println("Enter ID of genre that the book applies to");
 		genreID = scan.nextInt();
 		
+		if (genreID == 1 || genreID == 5) {
+			aisleNum = 1;
+		}
+		else if (genreID == 2 || genreID == 11 || genreID == 13 || genreID == 14) {
+			aisleNum = 2;
+		}
+		else if (genreID == 3 || genreID == 8) {
+			aisleNum = 3;
+		}
+		else if (genreID == 4 || genreID == 16) {
+			aisleNum = 4;
+		}
+		else if (genreID == 6 || genreID == 7 || genreID == 10) {
+			aisleNum = 5;
+		}
+		else if (genreID == 9 || genreID == 15 ) {
+			aisleNum = 6;
+		}
+		else if (genreID == 12) {
+			aisleNum = 7;
+		}
+		else if (genreID == 17) {
+			aisleNum = 8;
+		}
 		
 	}//end displayGenre
 	
 	
 	public static void displayFormats () {
-		String query = "";
+		Scanner format = new Scanner(System.in);
+		String query = "SELECT FormatID, `book format`.BookType, `New/Used`\r\n" + 
+				"FROM format\r\n" + 
+				"INNER JOIN `book format` on `book format`.BookTypeID = format.BookTypeID";
+		
+		int fID;
+		String bookType, newOrUsed;
+		
+		System.out.printf("%-10s %-12s %-13s\n","Format ID","Format","Condition");
+		
 		try (Connection con = DriverManager.getConnection(host, username, password);
 		        PreparedStatement pst = con.prepareStatement(query);
 		        ResultSet rs = pst.executeQuery()) {
 					
+				while(rs.next()) {
+					fID = rs.getInt(1);
+					bookType = rs.getString(2);
+					newOrUsed = rs.getString(3);
+					System.out.printf("%-10d %-12s %-13s\n",fID, bookType, newOrUsed);
+				}
 					
 			
 				}catch(SQLException ex) {
@@ -523,12 +603,77 @@ public class DatabaseClass {
 					lgr.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 		
-		
+		System.out.println("Enter the format ID number that pertains to the Format and Condition of the book you wish to add.");
+		formatID = format.nextInt();
 		
 	}//end DisplayFormats
 	
 	
 	public static void getPublisher() {
+		
+		Scanner scan1 = new Scanner(System.in);
+		String publisherName;
+		System.out.println("Enter the publisher of the book.");
+		publisherName = scan1.nextLine();
+		
+		String query = "SELECT `PublisherID`, `PublisherName` FROM publishers;";
+		int pubID;
+		String pubName;
+		
+		try (Connection con = DriverManager.getConnection(host, username, password);
+        PreparedStatement pst = con.prepareStatement(query);
+        ResultSet rs = pst.executeQuery()) {
+	
+			while (rs.next()) {
+			pubID = rs.getInt(1);
+			pubName = rs.getString(2);
+				if (pubName.compareToIgnoreCase(publisherName) == 0) {
+					publisherID = pubID;
+				}
+				
+				
+			}
+			
+			
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		
+		if (publisherID == 0) {
+			
+			query = "INSERT INTO publishers (PublisherName)\r\n" + 
+					"VALUES ('" + publisherName + "');";
+			try (Connection con = DriverManager.getConnection(host, username, password)){
+					Statement s = con.createStatement();
+		            s.executeUpdate(query);	
+		
+			}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+			
+			query = "SELECT AuthorID, Name FROM authors;";
+			try (Connection con = DriverManager.getConnection(host, username, password);
+			        PreparedStatement pst = con.prepareStatement(query);
+			        ResultSet rs = pst.executeQuery()) {
+				
+					while (rs.next()) {
+						pubID = rs.getInt(1);
+						pubName = rs.getString(2);
+						if (pubName.compareToIgnoreCase(pubName)== 0) {
+							authorID = pubID;
+						}
+							
+					}
+						
+					}catch(SQLException ex) {
+						Logger lgr = Logger.getLogger(clientProgram.class.getName());
+						lgr.log(Level.SEVERE, ex.getMessage(), ex);
+					}
+			
+			}
+		
 		
 	}//end getPublisher
 	
@@ -637,7 +782,7 @@ public static void Search() {
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -732,7 +877,7 @@ public static void Search() {
             System.out.println("Item added to cart!");
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		while(true) {
@@ -752,7 +897,7 @@ public static void Search() {
 				System.out.println("Item removed from cart");
 		
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -774,7 +919,7 @@ public static void Search() {
 				}
 		
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -792,7 +937,7 @@ public static void Search() {
 	                     System.out.println("Item updated");
 			
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+				Logger lgr = Logger.getLogger(clientProgram.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			
@@ -839,7 +984,7 @@ System.out.printf("%-90s %-15s %-10s %-10s \n", "Title", "ISBN"  ,"Quantity",  "
 				
             }
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.printf("\n\t\t\t\t\t\t\t\t\t\t\t\t\t    Subtotal: %.2f\n", sum);
@@ -976,7 +1121,7 @@ System.out.printf("%-90s %-15s %-10s %-10s \n", "Title", "ISBN"  ,"Quantity",  "
 				}
 			//scan.close();
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+				Logger lgr = Logger.getLogger(clientProgram.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		while(true) {
@@ -1045,7 +1190,7 @@ System.out.printf("%-90s %-15s %-10s %-10s \n", "Title", "ISBN"  ,"Quantity",  "
             System.out.println("Account Created!");
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		//scan.close();
@@ -1063,7 +1208,7 @@ System.out.printf("%-90s %-15s %-10s %-10s \n", "Title", "ISBN"  ,"Quantity",  "
             System.out.println("Guest Account Created!");
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -1082,7 +1227,7 @@ System.out.printf("%-90s %-15s %-10s %-10s \n", "Title", "ISBN"  ,"Quantity",  "
 
 					}
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+				Logger lgr = Logger.getLogger(clientProgram.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			
@@ -1122,11 +1267,11 @@ System.out.printf("%-90s %-15s %-10s %-10s \n", "Title", "ISBN"  ,"Quantity",  "
 					}//end while
 			//scan.close();
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+				Logger lgr = Logger.getLogger(clientProgram.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		
 	}// end Check email
 	
 	
-}//end DatabaseClass
+}//end clientProgram
