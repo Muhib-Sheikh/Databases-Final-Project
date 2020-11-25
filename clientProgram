@@ -29,7 +29,9 @@ public class DatabaseClass {
 	public static double subtotal;
 	public static double sum;
 	public static String tempUserID;
-
+	public static int publisherID = 0;
+	public static int authorID = 0;
+	public static int genreID = 0;
 	
 	public static void main(String[] args) throws ClassNotFoundException {
 	
