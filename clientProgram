@@ -159,6 +159,7 @@ public class DatabaseClass {
 		
 	}//end AdminSearch
 	
+	public static void UpdateInventory() {
 	Scanner scanme = new Scanner(System.in);
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Enter 1 to edit/delete a title\n" +
