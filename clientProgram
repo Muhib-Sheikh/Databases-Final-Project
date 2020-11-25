@@ -399,6 +399,139 @@ public class DatabaseClass {
 		UpdateInventory();
 	}//end UpdateInventory
 	
+	
+	public static void addTitle() {
+		Scanner scan = new Scanner(System.in);
+		String title;
+		
+		System.out.println("Enter the title of book you would like to add:");
+		title = scan.nextLine();
+		getAuthor();
+		displayGenre();
+		
+	}
+	
+	
+	public static void getAuthor() {
+		Scanner scan1 = new Scanner(System.in);
+		String authorName;
+		System.out.println("Enter the first and last name of author or organization name");
+		authorName = scan1.nextLine();
+		
+		String query = "SELECT AuthorID, Name FROM authors;";
+		int authID;
+		String authName;
+		
+		try (Connection con = DriverManager.getConnection(host, username, password);
+        PreparedStatement pst = con.prepareStatement(query);
+        ResultSet rs = pst.executeQuery()) {
+	
+			while (rs.next()) {
+			authID = rs.getInt(1);
+			authName = rs.getString(2);
+				if (authName.compareToIgnoreCase(authorName) == 0) {
+					authorID = authID;
+				}
+				
+				
+			}
+			
+			
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		
+		if (authorID == 0) {
+			
+			query = "INSERT INTO authors (Name)\r\n" + 
+					"VALUES ('" + authorName + "');";
+			try (Connection con = DriverManager.getConnection(host, username, password)){
+					Statement s = con.createStatement();
+		            s.executeUpdate(query);	
+		
+			}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+			
+			query = "SELECT AuthorID, Name FROM authors;";
+			try (Connection con = DriverManager.getConnection(host, username, password);
+			        PreparedStatement pst = con.prepareStatement(query);
+			        ResultSet rs = pst.executeQuery()) {
+				
+					while (rs.next()) {
+						authID = rs.getInt(1);
+						authName = rs.getString(2);
+						if (authName.compareToIgnoreCase(authorName)== 0) {
+							authorID = authID;
+						}
+							
+					}
+						
+					}catch(SQLException ex) {
+						Logger lgr = Logger.getLogger(clientProgram.class.getName());
+						lgr.log(Level.SEVERE, ex.getMessage(), ex);
+					}
+			
+			}
+		
+		}// end getAuthor()
+		
+		
+	public static void displayGenre() {
+		Scanner scan = new Scanner(System.in);
+		String query = "SELECT GenreID, GenreName FROM authors";
+		int genID;
+		String genName;
+		
+		try (Connection con = DriverManager.getConnection(host, username, password);
+        PreparedStatement pst = con.prepareStatement(query);
+        ResultSet rs = pst.executeQuery()) {
+			
+			System.out.printf("%-10s %-40s","Genre ID","Genre Name");
+			while (rs.next()) {
+				genID = rs.getInt(1);
+				genName = rs.getString(2);
+				System.out.printf("%-10d %-40s", genID, genName);
+			}
+	
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		
+		System.out.println("Enter ID of genre that the book applies to");
+		genreID = scan.nextInt();
+		
+		
+	}//end displayGenre
+	
+	
+	public static void displayFormats () {
+		String query = "";
+		try (Connection con = DriverManager.getConnection(host, username, password);
+		        PreparedStatement pst = con.prepareStatement(query);
+		        ResultSet rs = pst.executeQuery()) {
+					
+					
+			
+				}catch(SQLException ex) {
+					Logger lgr = Logger.getLogger(clientProgram.class.getName());
+					lgr.log(Level.SEVERE, ex.getMessage(), ex);
+				}
+		
+		
+		
+	}//end DisplayFormats
+	
+	
+	public static void getPublisher() {
+		
+	}//end getPublisher
+	
+	
+	
 	public static void CheckUserBal() {
 		
 	}
