@@ -159,52 +159,54 @@ public class DatabaseClass {
 		
 	}//end AdminSearch
 	
-	public static void UpdateInventory() {
-		Scanner scanme = new Scanner(System.in);
+	Scanner scanme = new Scanner(System.in);
+		Scanner scan = new Scanner(System.in);
 		System.out.println("Enter 1 to edit/delete a title\n" +
 						   "Enter 2 to add a title\n" +
 						   "Enter 3 to return to Admin Menu\n"
 				);
-		choice = scanme.nextInt();
+		choice = Integer.parseInt(scanme.nextLine());
 		
 		if (choice ==  1) {
 		System.out.println("Enter ISBN of title you would like to update.");
-		ISBN = scanme.nextLine();
+		ISBN = scan.nextLine();
 		
-		String query = "SELECT Title, authors.Name, ISBN, Price, RentalPrice, genre.GenreName, publishers.PublisherName, format.`New/used`, `book format`.BookType , Inventory\r\n" + 
-				"FROM books\r\n" + 
-				"INNER JOIN genre on genre.GenreID = books.GenreID,\r\n" + 
-				"INNER JOIN publishers on publishers.PublisherID = books.PublisherID,\r\n" + 
-				"INNER JOIN `format` on format.`FormatID` = books.FormatID,\r\n" + 
-				"INNER JOIN `book format` on `book format`.BookTypeID = format.`BookTypeID,`\r\n" + 
-				"INNER JOIN authors on authors.AuthorID = `books`.AuthorID\r\n" + 
-			    "books.ISBN LIKE \'" + ISBN + "\'"
-			    ;
+		String query = "SELECT Title, authors.Name, ISBN, Price, RentalPrice, genre.GenreName, publishers.PublisherName, format.`New/used`, `book format`.BookType , Inventory, DisplayArea, NewRelease\r\n" +  
+				"FROM books\r\n" +  
+				"INNER JOIN genre on genre.GenreID = books.GenreID\r\n" + 
+				"INNER JOIN publishers on publishers.PublisherID = books.PublisherID\r\n" + 
+				"INNER JOIN `format` on format.`FormatID` = books.FormatID\r\n" + 
+				"INNER JOIN `book format` on `book format`.BookTypeID = format.`BookTypeID`\r\n" + 
+				"INNER JOIN authors on authors.AuthorID = `books`.AuthorID \r\n" + 
+			    "WHERE books.ISBN LIKE \'" + ISBN + "\';";
+		System.out.println(query);
 			
 		try (Connection con = DriverManager.getConnection(host, username, password);
                 PreparedStatement pst = con.prepareStatement(query);
                 ResultSet rs = pst.executeQuery()) {
-			String var1, var2, var3, var4, var5, var6, var7, var8, var9, var10;
-			
-			System.out.printf("%-90s %-30s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s %-1s\n","Title","Name","ISBN","Price","Rental Price","Genre","Publisher","Condition","Format","Inv", "");
+			String title, name, isbn1, price, rentPrice, genre, pub, condition, format, inventory;
+			String aisle, release;
+			System.out.printf("%-90s %-30s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s %-20s %7s %-1s\n","Title","Name","ISBN","Price","Rental Price","Genre","Publisher","Condition","Format","Inv","Aisle Number","Release", "");
 			while (rs.next()) {
 				
-				var1 = rs.getString(1);
-				var2 = rs.getString(2);
-				var3 = rs.getString(3);
-				var4 = rs.getString(4);
-				var5 = rs.getString(5);
-				var6 = rs.getString(6);
-				var7 = rs.getString(7);
-				var8 = rs.getString(8);
-				var9 = rs.getString(9);
-				var10 = rs.getString(10);
-				System.out.printf("%-90s %-30s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s\n", var1,  var2,  var3,  var4,  var5,  var6,  var7,  var8,  var9,  var10);
+				title = rs.getString(1);
+				name = rs.getString(2);
+				isbn1 = rs.getString(3);
+				price = rs.getString(4);
+				rentPrice = rs.getString(5);
+				genre = rs.getString(6);
+				pub = rs.getString(7);
+				condition = rs.getString(8);
+				format = rs.getString(9);
+				inventory = rs.getString(10);
+				aisle = rs.getString(11);
+				release = rs.getString(12);
+				System.out.printf("%-90s %-30s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s %-20s %-15s\n", title,  name,  isbn1,  price,  rentPrice,  genre,  pub,  condition,  format, inventory, aisle, release);
 				
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.println();
@@ -225,12 +227,11 @@ public class DatabaseClass {
 		}
 		
 		else if (choice == 3) {
-			System.out.println( "Enter 1 to update Title\n" +
-								"Enter 2 to update Author Name\n" +
-								"Enter 3 to update ISBN\n" +
-								"Enter 4 to update Price \n" +
-								"Enter 5 to update Rental Price\n" +
-								"Enter 6 to update Inventory\n" +
+			System.out.println( "Enter 1 to update Price\n" +
+								"Enter 2 to update Rental Price\n" +
+								"Enter 3 to update Inventory\n" +
+								"Enter 4 to update Display Area/Aisle\n" +
+								"Enter 5 to update New Release\n" +
 								"Enter any other to return to search to update title\n"
 					);
 			choice = scanme.nextInt();
@@ -238,74 +239,71 @@ public class DatabaseClass {
 			switch (choice) {
 				
 				case 1: 
-					System.out.println("Enter the updated title:");
-					userString = scanme.nextLine();
+					double price;
+					System.out.println("Enter the updated price:");
+					price = scan.nextDouble();
 					
 					query = "UPDATE books\n" +
-							"SET Title = '"+ userString + "'\n" +
+							"SET Price = '"+ price + "'\n" +
 							"WHERE ISBN = '" + ISBN + "';";
 					try (Connection con = DriverManager.getConnection(host, username, password)){
 							Statement s = con.createStatement();
 				            s.executeUpdate(query);
-				            System.out.println("Title updated");
-							
-						
+				            System.out.println("Price updated\n");	
 					
-				}
-					catch(SQLException ex) {
-					Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+					}catch(SQLException ex) {
+					Logger lgr = Logger.getLogger(clientProgram.class.getName());
 					lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
-				
+				break;
 				case 2:
-					System.out.println("Enter the updated author name:");
-					userString = scanme.nextLine();
+					double rentalPrice;
+					System.out.println("Enter the updated rental price:");
+					rentalPrice = scan.nextDouble();
 					
 					query = "UPDATE books\n" +
-							"SET Name = '"+ userString + "'\n" +
+							"SET RentalPrice = '"+ rentalPrice + "'\n" +
 							"WHERE ISBN = '" + ISBN + "';";
 					try (Connection con = DriverManager.getConnection(host, username, password)){
 							Statement s = con.createStatement();
 				            s.executeUpdate(query);
-				            System.out.println("Title updated");
+				            System.out.println("Rental Price updated\n");
 							
 						
-					
-				}
-					catch(SQLException ex) {
-					Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+				}catch(SQLException ex) {
+					Logger lgr = Logger.getLogger(clientProgram.class.getName());
 					lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 
 					
-					
+					break;
 					
 				case 3:
-					System.out.println("Enter the updated ISBN:");
-					userString = scanme.nextLine();
+					int inv;
+					System.out.println("Enter the updated Inventory:");
+					inv = scan.nextInt();
 					
 					query = "UPDATE books\n" +
-							"SET Title = '"+ userString + "'\n" +
+							"SET Inventory = '"+ inv + "'\n" +
 							"WHERE ISBN = '" + ISBN + "';";
 					try (Connection con = DriverManager.getConnection(host, username, password)){
 							Statement s = con.createStatement();
 				            s.executeUpdate(query);
-				            System.out.println("Title updated");
-							
-						
+				            System.out.println("Inventory updated");	
 					
-				}
-					catch(SQLException ex) {
-					Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+				}catch(SQLException ex) {
+					Logger lgr = Logger.getLogger(clientProgram.class.getName());
 					lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 				
+					break;
 				case 4:
-					System.out.println("Enter the updated Price:");
-					userString = scanme.nextLine();
+					int aisle;
+					System.out.println("Enter the updated Aisle Number:");
+					aisle = scan.nextInt();
 					
 					query = "UPDATE books\n" +
-							"SET Title = '"+ userString + "'\n" +
+							"SET DisplayArea = '"+ aisle + "'\n" +
 							"WHERE ISBN = '" + ISBN + "';";
 					try (Connection con = DriverManager.getConnection(host, username, password)){
 							Statement s = con.createStatement();
@@ -316,38 +314,64 @@ public class DatabaseClass {
 					
 				}
 					catch(SQLException ex) {
-					Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+					Logger lgr = Logger.getLogger(clientProgram.class.getName());
 					lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 
+				break;
 				
 				case 5:
-					System.out.println("Enter the updated Rental Price:");
-					userString = scanme.nextLine();
+					int release;
+					System.out.println("Enter the updated Release value\n"
+									   +"If new enter 1 and if not new enter 0\n");
+					release = scan.nextInt();
 					
 					query = "UPDATE books\n" +
-							"SET Title = '"+ userString + "'\n" +
+							"SET NewRelease = '"+ release + "'\n" +
 							"WHERE ISBN = '" + ISBN + "';";
 					try (Connection con = DriverManager.getConnection(host, username, password)){
 							Statement s = con.createStatement();
 				            s.executeUpdate(query);
-				            System.out.println("Title updated");
+				            System.out.println("Release updated");
 							
 						
 					
 				}
 					catch(SQLException ex) {
-					Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+					Logger lgr = Logger.getLogger(clientProgram.class.getName());
 					lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 
+					
+				break;
+					
 				default:
+					UpdateInventory();
+					break;
 			
 			}
 		}// end else if 3
 		
+		/*DELETE FROM DATABASE*/
+		else if (choice == 4) {
+			String query2 = "DELETE FROM books\r\n" +
+							"WHERE ISBN = '" + ISBN + "';";
+			
+			try (Connection con = DriverManager.getConnection(host, username, password)){
+				Statement s = con.createStatement();
+	            s.executeUpdate(query2);
+	            System.out.println("Book deleted from database");
+					
+	}catch(SQLException ex) {
+		Logger lgr = Logger.getLogger(clientProgram.class.getName());
+		lgr.log(Level.SEVERE, ex.getMessage(), ex);
+	}
+			
+			
+		}
+		
 		else {
-			while(choice != 1 || choice != 2) {
+			while(choice != 1 || choice != 2 || choice != 3 || choice != 4) {
 				System.out.println("Invalid Option!\n");
 				System.out.println("1 to Continue Searching\n" + "2 to Return to Menu\n");
 				choice = scanme.nextInt();
@@ -363,12 +387,16 @@ public class DatabaseClass {
 		
 		else if (choice == 2) {
 			
+			addTitle();
+			
 		}
 		
 		else if (choice == 3) {
 			AdminAccess();
 		}
-	}
+		
+		UpdateInventory();
+	}//end UpdateInventory
 	
 	public static void CheckUserBal() {
 		
