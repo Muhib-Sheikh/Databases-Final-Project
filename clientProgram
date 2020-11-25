@@ -93,45 +93,45 @@ public class DatabaseClass {
 		//System.out.println(userString);
 		//System.out.println("WHERE authors.FirstName LIKE \'" + userString + "\' OR authors.LastName LIKE \'" + userString + "\' OR books.Title LIKE \'" + userString + "\' OR books.ISBN LIKE \'" + userString + "\' OR genre.GenreName LIKE \'" + userString + "\'");
 		// SQL code here to search tables for books by input.
-		String query = "SELECT Title, authors.FirstName, authors.LastName , ISBN, Price, RentalPrice, genre.GenreName, publishers.PublisherName, format.`New/used`, `book format`.BookType , Inventory\r\n" + 
-				"FROM books\r\n" + 
-				"INNER JOIN `book authors` on `book authors`.BookID = books.BookID\r\n" + 
+		String query = "SELECT Title, authors.Name, ISBN, Price, RentalPrice, genre.GenreName, publishers.PublisherName, format.`New/used`, `book format`.BookType , Inventory, DisplayArea, NewRelease\r\n" + 
+				"FROM books\r\n" +  
 				"INNER JOIN genre on genre.GenreID = books.GenreID\r\n" + 
 				"INNER JOIN publishers on publishers.PublisherID = books.PublisherID\r\n" + 
 				"INNER JOIN `format` on format.`FormatID` = books.FormatID\r\n" + 
 				"INNER JOIN `book format` on `book format`.BookTypeID = format.`BookTypeID`\r\n" + 
-				"INNER JOIN authors on authors.AuthorID = `book authors`.AuthorID\r\n" + 
-				"WHERE authors.FirstName LIKE \'" + userString + "\' OR authors.LastName LIKE \'" + userString + "\' OR books.Title LIKE \'"
-				+ userString + "\' OR books.ISBN LIKE \'" + userString + "\' OR genre.GenreName LIKE \'" + userString + "\'" +
-				"GROUP BY books.Title;";
+				"INNER JOIN authors on authors.AuthorID = `books`.AuthorID\r\n" + 
+				"WHERE authors.Name LIKE \'%" + userString + "%\' OR " +
+				"books.Title LIKE \'%" + userString + "%\' OR " +
+			    "books.ISBN LIKE \'" + userString + "\' OR " +
+				"genre.GenreName LIKE \'%" + userString + "%\'" +
+				"ORDER BY books.Title;";
 			
 		try (Connection con = DriverManager.getConnection(host, username, password);
                 PreparedStatement pst = con.prepareStatement(query);
                 ResultSet rs = pst.executeQuery()) {
-			String arr[] = {};
-			String var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11;
-			
-			System.out.printf("%-40s %-10s %-15s %-15s %-10s %-14s %-30s %-10s %-8s %-15s %-10s %-1s\n","Title","First Name","Last Name","ISBN","Price","Rental Price","Genre","Publisher","Format","Condition","Inv", "");
+			String title, name, isbn1, price, rentPrice, genre, pub, condition, format, inventory;
+			String aisle, release;
+			System.out.printf("%-90s %-30s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s %-20s %7s %-1s\n","Title","Name","ISBN","Price","Rental Price","Genre","Publisher","Condition","Format","Inv","Aisle Number","Release", "");
 			while (rs.next()) {
 				
-				var1 = rs.getString(1);
-				var2 = rs.getString(2);
-				var3 = rs.getString(3);
-				var4 = rs.getString(4);
-				var5 = rs.getString(5);
-				var6 = rs.getString(6);
-				var7 = rs.getString(7);
-				var8 = rs.getString(8);
-				var9 = rs.getString(9);
-				var10 = rs.getString(10);
-				var11 = rs.getString(11);
-				System.out.printf("%-40s %-10s %-15s %-15s %-10s %-14s %-30s %-10s %-8s %-15s %-10s\n", var1,  var2,  var3,  var4,  var5,  var6,  var7,  var8,  var9,  var10,  var11);
-				
+				title = rs.getString(1);
+				name = rs.getString(2);
+				isbn1 = rs.getString(3);
+				price = rs.getString(4);
+				rentPrice = rs.getString(5);
+				genre = rs.getString(6);
+				pub = rs.getString(7);
+				condition = rs.getString(8);
+				format = rs.getString(9);
+				inventory = rs.getString(10);
+				aisle = rs.getString(11);
+				release = rs.getString(12);
+				System.out.printf("%-90s %-30s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s %-20s %-15s\n", title,  name,  isbn1,  price,  rentPrice,  genre,  pub,  condition,  format, inventory, aisle, release);
 				
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.println();
@@ -141,7 +141,7 @@ public class DatabaseClass {
 			Search();
 		}
 		else if(choice == 2) {
-			UserAccess();
+			AdminAccess();
 		}
 		else {
 			while(choice != 1 || choice != 2) {
