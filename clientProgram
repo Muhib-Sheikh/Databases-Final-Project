@@ -1130,7 +1130,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 	
 	public static void deleteInvoice() {
 		String query = "DELETE FROM Invoice\r\n" + 
-						"WHERE userID ='" + userID+";";
+						"WHERE userID =" + userID+";";
 		
 		
 		try  (Connection con = DriverManager.getConnection(host, username, password)) {
