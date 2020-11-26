@@ -739,7 +739,7 @@ public class DatabaseClass {
 		
 	}// end UserAccess
 	
-public static void Search() {
+public static void Search() { 
 		Scanner scan = new Scanner(System.in);
 		System.out.print("Search by title, genre or author:\n");
 		userString = scan.nextLine();
@@ -753,12 +753,15 @@ public static void Search() {
 				"INNER JOIN `format` on format.`FormatID` = books.FormatID\r\n" + 
 				"INNER JOIN `book format` on `book format`.BookTypeID = format.`BookTypeID`\r\n" + 
 				"INNER JOIN authors on authors.AuthorID = `books`.AuthorID\r\n" + 
-				"WHERE authors.Name LIKE \'%" + userString + "%\' OR " +
+				"WHERE books.DisplayArea > " + 0 + " AND " +
+				"(authors.Name LIKE \'%" + userString + "%\' OR " +
 				"books.Title LIKE \'%" + userString + "%\' OR " +
 			    "books.ISBN LIKE \'" + userString + "\' OR " +
-				"genre.GenreName LIKE \'%" + userString + "%\'" +
+				"genre.GenreName LIKE \'%" + userString + "%\')" +
 				"ORDER BY books.Title ASC;";
 			
+		
+		
 		try (Connection con = DriverManager.getConnection(host, username, password);
                 PreparedStatement pst = con.prepareStatement(query);
                 ResultSet rs = pst.executeQuery()) {
@@ -782,7 +785,7 @@ public static void Search() {
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -1123,6 +1126,30 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 			
 	}// end Cart()
 	
+	
+	
+	public static void deleteInvoice() {
+		String query = "DELETE FROM Invoice\r\n" + 
+						"WHERE userID ='" + userID+";";
+		
+		
+		try  (Connection con = DriverManager.getConnection(host, username, password)) {
+			
+	        Statement s = con.createStatement();
+	        s.executeUpdate(query);
+			
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+	        lgr.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		  
+		}// end deleteInvoice()
+	
+	
+	
+	
+	
+	
 	public static void Purchase() {
 		int Rented = 0;		
 		
@@ -1161,6 +1188,9 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 			    Rented + "," +
 			    "(SELECT sum(Quantity * RentalPrice) FROM `shopping cart` WHERE ISBN IN ('" + ISBN + "') AND UserID IN ('"+ userID +"')));";
 	 
+	 String query2 = "UPDATE users\r\n" + 
+	 		"SET NumRentals = NumRentals + 1\r\n" + 
+	 		"WHERE userId = "+ userID + ";";
 	 
 	System.out.println(query);
 	
@@ -1168,15 +1198,16 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 		
         Statement s = con.createStatement();
         s.executeUpdate(query);
+        s.executeUpdate(query2);
    
         System.out.println("Item selected as rented");
 		
 	}catch(SQLException ex) {
-		Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+		Logger lgr = Logger.getLogger(clientProgram.class.getName());
         lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 	  
-	}
+	}// end Rented
 	
 	public static void RentCount() {
 		String query = "SELECT NumRentals\r\n" + 
