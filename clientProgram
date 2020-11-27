@@ -698,6 +698,183 @@ public class clientProgram {
 	}
 	
 	public static void GenerateReports() {
+	Scanner scan = new Scanner(System.in);
+		System.out.println("Enter 1 for revenue reports by title\n"
+						  +"Enter 2 for revenue reports by genre\n"
+						  + "Enter 3 for revenue by year, month and week\n");
+		choice = Integer.parseInt(scan.nextLine());
+		switch (choice) {
+		
+		case 1:
+			System.out.println("Enter 1 to search for reports by title\n"
+							  +"Enter 2 to generate all reports by title\n");
+			choice = Integer.parseInt(scan.nextLine());
+			
+			if (choice == 1) {
+				
+				System.out.println("Search the exact title:\n");
+				userString = scan.nextLine();
+				
+				String query = "SELECT books.Title, sum(Total) AS REVENUE\r\n" + 
+						"FROM `order item`\r\n" + 
+						"INNER JOIN books ON books.BookID =`order item`.BookID\r\n" + 
+						"WHERE books.Title LIKE '"+userString+"'"+
+						"GROUP BY books.Title;";
+				
+				
+				try (Connection con = DriverManager.getConnection(host, username, password);
+		                PreparedStatement pst = con.prepareStatement(query);
+		                ResultSet rs = pst.executeQuery()) {
+					String title;
+					double revenue;
+					
+					System.out.printf("%-60s %-10s \n","Title","Revenue");
+					while (rs.next()) {
+						
+						title = rs.getString(1);
+						revenue = rs.getDouble(2);
+						
+						System.out.printf("%-60s %-10.2f \n",title,revenue);
+						
+						
+		            }
+					
+				}catch(SQLException ex) {
+					Logger lgr = Logger.getLogger(clientProgram.class.getName());
+		            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+				}
+				
+				GenerateReports();
+				
+			}
+			else if (choice == 2) {
+				
+				String query = "SELECT books.Title, sum(Total) AS REVENUE\r\n" + 
+						"FROM `order item`\r\n" + 
+						"INNER JOIN books ON books.BookID =`order item`.BookID\r\n" + 
+						"GROUP BY books.Title;";
+				
+				try (Connection con = DriverManager.getConnection(host, username, password);
+		                PreparedStatement pst = con.prepareStatement(query);
+		                ResultSet rs = pst.executeQuery()) {
+					String title;
+					double revenue;
+					
+					System.out.printf("%-60s %-10s \n","Title","Revenue");
+					while (rs.next()) {
+						
+						title = rs.getString(1);
+						revenue = rs.getDouble(2);
+						
+						System.out.printf("%-60s %-10.2f \n",title,revenue);
+						
+						
+		            }
+					
+				}catch(SQLException ex) {
+					Logger lgr = Logger.getLogger(clientProgram.class.getName());
+		            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+				}
+				
+				
+				GenerateReports();
+				
+			}
+			
+			break;
+			
+		case 2:
+			
+			
+			System.out.println("Enter 1 to search for reports by genre\n"
+					  +"Enter 2 to generate all reports by genre\n");
+	choice = Integer.parseInt(scan.nextLine());
+	
+	if (choice == 1) {
+		
+		System.out.println("Search the exact title:\n");
+		userString = scan.nextLine();
+		
+		String query = "SELECT genre.GenreName, sum(Total) AS Revenue\r\n" + 
+				"FROM `order item`\r\n" + 
+				"INNER JOIN books ON books.BookID =`order item`.BookID\r\n" + 
+				"INNER JOIN genre ON genre.GenreID = books.GenreID\r\n" + 
+				"WHERE genre.GenreName LIKE \"%"+userString+"%\"\r\n" + 
+				"GROUP BY genre.GenreName;";
+	
+		
+		try (Connection con = DriverManager.getConnection(host, username, password);
+              PreparedStatement pst = con.prepareStatement(query);
+              ResultSet rs = pst.executeQuery()) {
+			String title;
+			double revenue;
+			
+			System.out.printf("%-60s %-10s \n","Title","Revenue");
+			while (rs.next()) {
+				
+				title = rs.getString(1);
+				revenue = rs.getDouble(2);
+				
+				System.out.printf("%-60s %-10.2f \n",title,revenue);
+				
+				
+          }
+			
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+          lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		
+		GenerateReports();
+		
+	}
+	
+	else if (choice == 2) {
+		
+		String query = "SELECT genre.GenreName, sum(Total) AS Revenue\r\n" + 
+				"FROM `order item`\r\n" + 
+				"INNER JOIN books ON books.BookID =`order item`.BookID\r\n" + 
+				"INNER JOIN genre ON genre.GenreID = books.GenreID\r\n" + 
+				"GROUP BY genre.GenreName;";
+		
+		try (Connection con = DriverManager.getConnection(host, username, password);
+                PreparedStatement pst = con.prepareStatement(query);
+                ResultSet rs = pst.executeQuery()) {
+			String title;
+			double revenue;
+			
+			System.out.printf("%-60s %-10s \n","Title","Revenue");
+			while (rs.next()) {
+				
+				title = rs.getString(1);
+				revenue = rs.getDouble(2);
+				
+				System.out.printf("%-60s %-10.2f \n",title,revenue);
+				
+				
+            }
+			
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		
+		
+		GenerateReports();
+		
+	}
+			
+			break;
+		
+		case 3:
+			
+			break;
+			
+			
+		default:
+		
+		}
+		
 		
 	}
 	
