@@ -46,6 +46,9 @@ public class clientProgram {
     public static int quantity;
     public static int flag = 1;
     public static int rented;
+    public static Date dueDate;
+    public static String title;
+    public static int quantity1;
 	
 	
 	public static void main(String[] args) throws ClassNotFoundException {
