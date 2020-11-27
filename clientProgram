@@ -43,6 +43,8 @@ public class clientProgram {
     public static double total;
     public static String custEmail;
     public static int orderID;
+    public static int quantity;
+    public static int flag = 1;
 	
 	
 	public static void main(String[] args) throws ClassNotFoundException {
@@ -885,7 +887,7 @@ public class clientProgram {
 				"	(SELECT RentalPrice FROM books WHERE ISBN IN ('" + ISBN + "')),	\r\n " +     
 				"   (SELECT ISBN FROM books WHERE ISBN IN ('" + ISBN + "'))     \r\n " +
 				");";
-		System.out.println(query);
+		
 		
 		  try  (Connection con = DriverManager.getConnection(host, username, password)) {
 			
@@ -910,7 +912,6 @@ public class clientProgram {
 				  {
 				Statement s = con.createStatement();
 				s.executeUpdate(query);
-				//System.out.println(query);
 				System.out.println("Item removed from cart");
 		
 		}catch(SQLException ex) {
@@ -980,8 +981,6 @@ String query = "SELECT DISTINCT `shopping cart`.BookTitle, `shopping cart`.ISBN 
 		"FROM `shopping cart`\r\n" + 
 		"WHERE UserID = '" + userID +"'\r\n" + 
 		"GROUP BY `shopping cart`.BookID;";
-//System.out.println(query);
-//System.out.println("userEmail: " + userEmail);
 System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantity",  "Price", "Rental Price");
 	
 		try (Connection con = DriverManager.getConnection(host, username, password);
@@ -1004,12 +1003,15 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
+		
+		
 		System.out.println("\nIf you would like to remove an item enter 1\n"
 						 + "If you would like to update the quantity of an item enter 2\n"
 						 + "If you would like to rent/purchase an item enter 3\n"
 						 + "To continue to check out enter 4\n"
 						 + "To return to menu enter 5\n");
 		choice = scanner.nextInt();
+		
 			if (choice == 1) {
 				System.out.println("Enter the ISBN of the book you wish to remove.");
 				userString = scan.nextLine();
@@ -1034,14 +1036,37 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 					Purchase();
 				}
 				
+				
+				String query5 = "SELECT Quantity \r\n" + 
+						"FROM `shopping cart`\r\n" + 
+						"WHERE UserID = '" + userID +"' AND ISBN = '"+ ISBN + "'\r\n;";
+				
+				
+						try (Connection con = DriverManager.getConnection(host, username, password);
+				                PreparedStatement pst = con.prepareStatement(query5);
+				                ResultSet rs = pst.executeQuery()) {
+							//int quantity;
+					
+							while (rs.next()) {
+								 quantity = rs.getInt(1);
+								
+				            }
+						}catch(SQLException ex) {
+							Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+						}
+				
+				
+				
 				if(choice == 2) {
 					System.out.println("Enter ISBN you would like to rent:\n");
 					ISBN = scan.nextLine();
 					RentCount();
-					if(rentCount >= 2){
+					if(rentCount >= 2 || rentCount + quantity >= 2){
 						System.out.println("Max rentals reached (2)\n" + "To rent another title, return one\n");
 						Cart();
 					}
+					
 					else {
 					Rent();
 					}
@@ -1057,7 +1082,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 						"INNER JOIN books ON books.BookID = Invoice.BookID\r\n" + 
 						"WHERE Invoice.UserID LIKE '" + userID +"'"
 						+ " GROUP BY Invoice.BookID;\r\n";
-				System.out.println(query1);
+			
 				//System.out.println("userEmail: " + userEmail);
 				System.out.printf("%-85s %-10s %-10s\n", "Title", "Quantity",  "Price");
 					
@@ -1066,7 +1091,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 				                ResultSet rs = pst.executeQuery()) {
 							String title;
 							int quantity;
-							double price, total;
+							double price;
 					
 							while (rs.next()) {
 								title = rs.getString(1);
@@ -1081,7 +1106,8 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 							Logger lgr = Logger.getLogger(clientProgram.class.getName());
 				            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 						}
-				System.out.printf("\n\t\t\t\t\t\t\t\t\t\t       Subtotal: %.2f\n\n", sum);
+						total = sum;
+				System.out.printf("\n\t\t\t\t\t\t\t\t\t\t          Total: %.2f\n\n", sum);
 				System.out.println("Enter 1 to confirm transaction\n" + "Enter 2 to cancel transaction\n" + "Enter 3 to continue shopping\n");
 				choice = scan.nextInt();
 				if(choice == 1) {
@@ -1112,9 +1138,43 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 					if(customerID == 0) {
 						CreateCustomer();
 					}
+					else {
+						custEmail = userEmail;
+					}
 
-					CreateOrder();
-					CreateRental();
+					
+					String query5 = "SELECT Quantity\r\n" + 
+							"FROM Invoice\r\n" + 
+							"WHERE UserID = '" + userID +"' AND Rented = "+ 1 + "\r\n;";
+						
+							try (Connection con = DriverManager.getConnection(host, username, password);
+					                PreparedStatement pst = con.prepareStatement(query5);
+					                ResultSet rs = pst.executeQuery()) {
+								//int quantity;
+						
+								while (rs.next()) {
+									 quantity = rs.getInt(1);
+									 if (quantity + rentCount > 2) {
+										 flag = 0;
+									 }
+									
+					            }
+							}catch(SQLException ex) {
+								Logger lgr = Logger.getLogger(clientProgram.class.getName());
+					            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+							}
+					
+					
+					
+					if(flag == 1 ) {
+						CreateOrder();
+					    CreateRental();
+						}
+					else {
+						System.out.println("Maximum number of rentals [2] currently checked out\n Return a rental to rent a new item.\n");
+						Cart();
+					}
+					
 					
 				}
 				else if (choice == 2) {
@@ -1175,7 +1235,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 				"	(SELECT Price FROM `shopping cart` WHERE ISBN IN ('" + ISBN + "') AND UserID IN ('"+ userID +"')),\r\n" + 
 				    Rented + "," +
 				    "(SELECT sum(Quantity * Price) FROM `shopping cart` WHERE ISBN IN ('" + ISBN + "') AND UserID IN ('"+ userID +"')));";
-		System.out.println(query);
+		
 		
 		  try  (Connection con = DriverManager.getConnection(host, username, password)) {
 			  
@@ -1209,7 +1269,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 	 		"SET NumRentals = NumRentals + 1\r\n" + 
 	 		"WHERE userId = "+ userID + ";";
 	 
-	System.out.println(query);
+	
 	
 	  try  (Connection con = DriverManager.getConnection(host, username, password)) {
 		
@@ -1248,6 +1308,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 	
 public static void CreateOrder() {
 		
+	
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = new Date();
 		String date1 = df.format(date);
@@ -1261,7 +1322,7 @@ public static void CreateOrder() {
 					"   '"+ sqlDate +"',\r\n" + 
 					"	'"+ total + "'       \r\n" + 
 					" );";
-			System.out.println(query);
+			
 			try  (Connection con = DriverManager.getConnection(host, username, password)) {
 				
 		        Statement s = con.createStatement();
@@ -1276,7 +1337,7 @@ public static void CreateOrder() {
 			String query2 = " SELECT OrderID\r\n" + 
 					" FROM orders\r\n" + 
 					" WHERE CustomerID = " + customerID +" AND OrderDate = '" + sqlDate +"' AND Total = " + total +";";
-			System.out.println(query2);
+		
 			try (Connection con = DriverManager.getConnection(host, username, password);
 	                PreparedStatement pst = con.prepareStatement(query2);
 	                ResultSet rs = pst.executeQuery()) {
@@ -1290,21 +1351,54 @@ public static void CreateOrder() {
 	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			
+			String query4 = "SELECT BookID, Quantity, Price, Rented, Total\r\n" + 
+					"FROM Invoice \r\n" + 
+					"WHERE UserID = "+ userID+";";
+			int bookID, rented, quantity;
+			double price, total2;
 			
-			String query3 = "INSERT INTO `order item` (OrderID, BookID, OrderDate, Quantity, Price, Rented, Total) VALUES (\r\n" + 
-					"   " + orderID + ",\r\n" + 
-					"   (SELECT BookID FROM Invoice WHERE UserID IN (" + userID +")),\r\n" + 
-					"   '" + sqlDate +"',\r\n" + 
-					"	(SELECT Quantity FROM Invoice WHERE UserID IN (" + userID +")),\r\n" + 
-					"	(SELECT Price FROM Invoice WHERE UserID IN (" + userID +")),\r\n" + 
-					"    (SELECT Rented FROM Invoice WHERE UserID IN (" + userID +")),\r\n" + 
-					"    "+ total+ "\r\n" + 
-					" );";
-			System.out.println(query3);
+			String query3;
+			
+			try (Connection con = DriverManager.getConnection(host, username, password);
+	                PreparedStatement pst = con.prepareStatement(query4);
+	                ResultSet rs = pst.executeQuery()) {
+				
+
+				while (rs.next()) {
+					bookID = rs.getInt(1);
+					quantity = rs.getInt(2);
+					price = rs.getDouble(3);
+					rented = rs.getInt(4);
+					total2 = rs.getDouble(5);
+					
+					query3 = "INSERT INTO `order item` (OrderID, BookID, OrderDate, Quantity, Price, Rented, Total) VALUES (\r\n" + 
+							"   " + orderID + ",\r\n" + 
+							bookID + ",\r\n" + 
+							"   '" + sqlDate +"',\r\n" + 
+							quantity + ",\r\n" + 
+							price + ",\r\n" + 
+							rented + ",\r\n" 
+							 + total2+ "\r\n" + 
+							" );";
+					
+					
+					 Statement s = con.createStatement();
+				        s.executeUpdate(query3);	
+					
+					
+	            }
+				
+			}catch(SQLException ex) {
+				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+			
+			
+			
+			
 			try  (Connection con = DriverManager.getConnection(host, username, password)) {
 				
-		        Statement s = con.createStatement();
-		        s.executeUpdate(query3);		   		        
+		       	   		        
 				
 			}catch(SQLException ex) {
 				Logger lgr = Logger.getLogger(clientProgram.class.getName());
@@ -1318,14 +1412,48 @@ public static void CreateOrder() {
 		}
 		
 		
-	}
+	}//end CreateOrder
 	
 public static void CreateRental() {
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     Date date = new Date();
     String date1 = df.format(date);
     Date utilDate;
-
+    
+    String query5 = "SELECT Quantity \r\n" + 
+			"FROM Invoice\r\n" + 
+			"WHERE UserID = '" + userID +"' AND Rented =" +1+ "\r\n;";
+	
+	
+		
+			try (Connection con = DriverManager.getConnection(host, username, password);
+	                PreparedStatement pst = con.prepareStatement(query5);
+	                ResultSet rs = pst.executeQuery()) {
+				//int quantity;
+		
+				while (rs.next()) {
+					 quantity = rs.getInt(1);
+					
+	            }
+			}catch(SQLException ex) {
+				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+	
+	
+	
+	
+		
+		if(rentCount >= 2 || rentCount + quantity >= 2){
+			System.out.println("Max number of rentals (2) checked out.\n Return one to rent another.\n");
+			Cart();
+			
+			
+		}
+		
+		else
+		{
+		
     try {
         utilDate = new SimpleDateFormat("yyyy-MM-dd").parse(date1);
         java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
@@ -1335,9 +1463,8 @@ public static void CreateRental() {
                 "    (SELECT BookID FROM Invoice WHERE UserID IN (" + userID + ") AND Rented = 1),\r\n" + 
                 "    '"+ sqlDate +"',\r\n" + 
                 "    '2020-11-30',\r\n" + 
-                "    '3.00'\r\n" + 
-                " );";
-        System.out.println(query);
+                    "(SELECT Price FROM Invoice WHERE UserID IN (" + userID + ") AND Rented = 1)\r\n );";
+       
         try  (Connection con = DriverManager.getConnection(host, username, password)) {
 
             Statement s = con.createStatement();
@@ -1352,7 +1479,7 @@ public static void CreateRental() {
         // TODO Auto-generated catch block
         e.printStackTrace();
     }
-
+		}
 
 
 }
@@ -1382,6 +1509,8 @@ public static void CreateRental() {
 		String firstName, lastName, email, phone, address, zip, city, state, country;
 		
 		if(signedIn == true) {
+			
+			
 			System.out.println("Enter phone number:\n");
 			phone = scan2.nextLine();
 			System.out.println("Enter street address:\n");
@@ -1407,7 +1536,7 @@ public static void CreateRental() {
 			 		"    '" + state +"',\r\n" + 
 			 		"    '" + country +"' 	     \r\n" + 
 			 		" );";	
-			System.out.println(query);
+		
 			 try  (Connection con = DriverManager.getConnection(host, username, password)) {
 					
 			        Statement s = con.createStatement();
@@ -1418,7 +1547,7 @@ public static void CreateRental() {
 			        lgr.log(Level.SEVERE, ex.getMessage(), ex);
 					}
 			
-			
+			 custEmail = userEmail;
 		}
 		else {
 			
@@ -1453,7 +1582,7 @@ public static void CreateRental() {
 			 		"    '" + state +"',\r\n" + 
 			 		"    '" + country +"' 	     \r\n" + 
 			 		" );";
-			System.out.println(query);
+	
 			 try  (Connection con = DriverManager.getConnection(host, username, password)) {
 					
 			        Statement s = con.createStatement();
@@ -1478,7 +1607,7 @@ public static void CreateRental() {
 		String query1 = "SELECT Email, Password, FirstName, UserID " + 
 				"FROM users "
 				+ "WHERE Email = '" + userEmail + "';";
-		//System.out.println(query1);
+	
 			try  (Connection con = DriverManager.getConnection(host, username, password);
 	
 						PreparedStatement pst = con.prepareStatement(query1);
@@ -1639,7 +1768,7 @@ public static void CreateRental() {
 		String query1 = "SELECT Email, UserID " + 
 				"FROM users "
 				+ "WHERE Email = '" + userEmail + "';";
-		System.out.println(query1);
+		
 			try  (Connection con1 = DriverManager.getConnection(host, username, password);
 	
 						PreparedStatement pst = con1.prepareStatement(query1);
