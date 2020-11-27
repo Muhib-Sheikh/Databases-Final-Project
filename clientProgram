@@ -1455,7 +1455,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		  
-	}
+	}//end Purchase
 	
 	
 	//EDITED
@@ -1509,7 +1509,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
-	}
+	}//end RentCount
 	
 public static void CreateOrder() {
 		
@@ -1692,23 +1692,199 @@ public static void CreateRental() {
 		}
 
 
-}
+}//end createRental
 
-	
 	public static void Return () {
-		// DISPLAY Books currently checked out with ID 
-		System.out.println("Enter ID of book you would like to return or 0 to return to User Menu");
-		choice = scanner.nextInt();
-		if (choice == 0) {
-			UserAccess();
-		}
-		//if statement to make sure choice == one of the IDS
-		//if choice == ID then set return value to true or 1 then call Return();
-		else {
-			System.out.println("Enter correct ID");
+		Scanner scan = new Scanner(System.in);
+		String ISBN;
+		Date checkoutDate;
+		Date dueDate;
+		Date orderDate;
+		double price;
+		int userQuantity;
+		System.out.println("Enter 1 to return a rental\n" + "Enter 2 to return a purchase\n" + "Enter 3 to return to menu\n");
+		choice = Integer.parseInt(scan.nextLine());
+		
+		if(choice == 1) {
+			String query = "SELECT books.Title, books.ISBN,rentals.CheckoutDate, rentals.DueDate\r\n" + 
+					"FROM rentals\r\n" + 
+					"INNER JOIN books on books.BookID = rentals.BookID\r\n" + 
+					"WHERE rentals.UserID = " + userID +";";
+			//System.out.println(query);
+			System.out.println("CURRENT RENTALS");
+			System.out.println("---------------");
+			System.out.printf("%-85s %-15s %-10s     %-15s\n", "Title", "ISBN"  ,"Checkout Date",  "Due Date");
+			try (Connection con = DriverManager.getConnection(host, username, password);
+	                PreparedStatement pst = con.prepareStatement(query);
+	                ResultSet rs = pst.executeQuery()) {
+		
+				while (rs.next()) {
+					title = rs.getString(1);
+					ISBN = rs.getString(2);
+					checkoutDate = rs.getDate(3);
+					dueDate = rs.getDate(4);
+					
+					System.out.printf("%-85s %-15s %-10s \t%-15s\n", title, ISBN , checkoutDate, dueDate);
+	            }
+			}catch(SQLException ex) {
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+			
+			System.out.println("\nEnter the ISBN of the book you wish to return");
+			userString = scan.nextLine();
+			
+			String query2 = "DELETE rentals\r\n" + 
+					"FROM rentals\r\n" + 
+					"INNER JOIN books ON books.BookID = rentals.BookID\r\n" + 
+					"WHERE ISBN = '" + userString +"';";
+			
+			String query3 = "UPDATE users\r\n" + 
+					"SET NumRentals = NumRentals - 1 " +
+					"WHERE UserID = " + userID + ";";
+			//System.out.println(query3);
+			String query4 = "";
+			
+			try  (Connection con = DriverManager.getConnection(host, username, password)) {
+
+	            Statement s = con.createStatement();
+	            s.executeUpdate(query2);
+	            s.executeUpdate(query3);
+
+	        }catch(SQLException ex) {
+	            Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+	            }
+			System.out.println("" + title + " returned");
 			Return();
+					
 		}
-	}	
+		
+		 if(choice == 2) {
+			
+			String query5 = "SELECT books.Title, books.ISBN, `order item`.Price,`order item`.Quantity ,`order item`.OrderDate\r\n" + 
+					"FROM `order item`\r\n" + 
+					"INNER JOIN books ON books.BookID = `order item`.BookID\r\n" + 
+					"INNER JOIN orders ON orders.OrderID = `order item`.OrderID\r\n" + 
+					"INNER JOIN customers ON customers.CustomerID = orders.CustomerID\r\n" + 
+					"WHERE customers.UserID = " + userID + " AND Rented = 0;";
+			
+			System.out.println("PREVIOUSLY BOUGHT");
+			System.out.println("-----------------");
+			System.out.printf("%-85s %-15s %-8s %-8s %-15s\n", "Title", "ISBN"  ,"Price", "Quantity" ,"Order Date");
+			try (Connection con = DriverManager.getConnection(host, username, password);
+	                PreparedStatement pst = con.prepareStatement(query5);
+	                ResultSet rs = pst.executeQuery()) {
+		
+				while (rs.next()) {
+					title = rs.getString(1);
+					ISBN = rs.getString(2);
+					price = rs.getDouble(3);
+					quantity1 = rs.getInt(4);
+					orderDate = rs.getDate(5);
+					
+					System.out.printf("%-85s %-15s %-8s %-8s\t%-15s\n", title, ISBN , price, quantity1 ,orderDate);
+	            }
+			}catch(SQLException ex) {
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+			
+			System.out.println("\nEnter the ISBN of the book you wish to return");
+			userString = scan.nextLine();
+			//update inventory after
+			
+			String query6 = "SELECT Quantity\r\n" + 
+					"FROM `order item`\r\n" + 
+					"INNER JOIN books ON books.BookID = `order item`.BookID\r\n" + 
+					"WHERE books.ISBN = '" + userString + "';";
+			//System.out.println(query6);
+			try (Connection con = DriverManager.getConnection(host, username, password);
+	                PreparedStatement pst = con.prepareStatement(query6);
+	                ResultSet rs = pst.executeQuery()) {
+		
+				while (rs.next()) {
+					
+					quantity1 = rs.getInt(1);
+					
+	            }
+			}catch(SQLException ex) {
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		
+			System.out.println("\nEnter quantity you wish to return");
+			userQuantity = scan.nextInt();
+			
+			if(userQuantity > quantity1) {
+				System.out.println("number exceeds quantity");
+				Return();
+			}
+			else if(userQuantity == quantity1){
+				String query7 = "UPDATE books\r\n" + 
+						"SET Inventory = Inventory + " + userQuantity + "\r\n" + 
+						"WHERE ISBN = '" + userString +"';";
+				//System.out.println(query7);
+				String query8 = "DELETE `order item`\r\n" + 
+						"FROM `order item`\r\n" + 
+						"INNER JOIN books ON books.BookID = `order item`.BookID\r\n" + 
+						"WHERE ISBN = '" + userString +"' AND Quantity = " + userQuantity +";";
+				//System.out.println(query8);
+				try  (Connection con = DriverManager.getConnection(host, username, password)) {
+
+		            Statement s = con.createStatement();
+		            s.executeUpdate(query7);
+		            s.executeUpdate(query8);
+
+		        }catch(SQLException ex) {
+		            Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+		            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		            }	
+			}
+			else if(userQuantity < quantity1) {
+				String query9 = "UPDATE books\r\n" + 
+						"SET Inventory = Inventory + " + userQuantity + "\r\n" + 
+						"WHERE ISBN = '" + userString +"';";
+				
+				String query10 = "UPDATE `order item`\r\n" + 
+						"SET Quantity = Quantity - '"+ userQuantity +"'\r\n" + 
+						"INNER JOIN books ON books.BookID = `order item`.BookID\r\n" + 
+						"WHERE ISBN = '" + userString +"' AND Quantity = "+ quantity1 +" ;";
+				//System.out.println(query10);
+				try  (Connection con = DriverManager.getConnection(host, username, password)) {
+
+		            Statement s = con.createStatement();
+		            s.executeUpdate(query9);
+		            s.executeUpdate(query10);
+
+		        }catch(SQLException ex) {
+		            Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+		            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		            }	
+				System.out.println("Item(s) returned");
+				Return();
+			}
+			
+				
+		}
+		
+		 if(choice == 3) {
+				UserAccess();
+			}
+
+			else if (choice != 1 || choice != 2 || choice != 3) {
+				while(choice != 1 || choice != 2 || choice != 3) {
+					System.out.println("Invalid option!");
+					choice = scan.nextInt();
+					Return();
+					
+				}
+			}
+		
+		
+		
+	}//end return
+	
 	public static void Balance () {
 		//print balance and late fees
 		//let user pay one or both
