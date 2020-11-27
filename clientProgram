@@ -45,6 +45,7 @@ public class clientProgram {
     public static int orderID;
     public static int quantity;
     public static int flag = 1;
+    public static int rented;
 	
 	
 	public static void main(String[] args) throws ClassNotFoundException {
@@ -1340,14 +1341,41 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 								Logger lgr = Logger.getLogger(clientProgram.class.getName());
 					            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 							}
+							
+							int rent;
+							
+							String query6 = "SELECT Rented FROM Invoice\r\n" + 
+									"WHERE Rented = 1;";
+								
+									try (Connection con = DriverManager.getConnection(host, username, password);
+							                PreparedStatement pst = con.prepareStatement(query6);
+							                ResultSet rs = pst.executeQuery()) {
+									
+								
+										while (rs.next()) {
+											rent = rs.getInt(1);
+											 if (rent == 1) {
+												 rented = 1;
+											 }
+											
+							            }
+									}catch(SQLException ex) {
+										Logger lgr = Logger.getLogger(clientProgram.class.getName());
+							            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+									}
+							
+							
+							
+							
 					
+							CreateOrder();
+							
 					
-					
-					if(flag == 1 ) {
-						CreateOrder();
+					if(flag == 1 && rented == 1 ) {
+						
 					    CreateRental();
 						}
-					else {
+					else if (flag == 0 || rentCount > 2) {
 						System.out.println("Maximum number of rentals [2] currently checked out\n Return a rental to rent a new item.\n");
 						Cart();
 					}
@@ -1485,7 +1513,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 	
 public static void CreateOrder() {
 		
-	
+	if ((flag == 1  && rented == 0)||(flag == 1 && rented == 1)) {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = new Date();
 		String date1 = df.format(date);
@@ -1588,7 +1616,12 @@ public static void CreateOrder() {
 			e.printStackTrace();
 		}
 		
-		
+		System.out.println("Transaction confirmed.\n Thank you for shopping at the UNF Bookstore! Swoop!");
+}
+	
+	else {
+		System.out.println("Maximum number of rentals [2] currently checked out.\n Return a rental to rent a new item.");
+	}
 	}//end CreateOrder
 	
 public static void CreateRental() {
