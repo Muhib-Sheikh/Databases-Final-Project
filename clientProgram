@@ -16,12 +16,13 @@ import java.text.SimpleDateFormat;
 
 public class DatabaseClass {
 
+	public static String ADMINPASS = "X12sPyzt9834a";
 	static Scanner scanner = new Scanner(System.in);
     public static String host = "jdbc:mysql://cisvm-winsrv-mysql1.unfcsd.unf.edu:3307/group1";
     //String host2 = "jdbc:mysql://localhost:3306/group1";
     public static String username = "n01442744";
     public static String password = "V22d9569";
-    public static String ADMINPASS = "X12sPyzt9834a";
+    
     public static String userEmail = null;
     public static String userID = null;
     public static String guest = null;
@@ -53,14 +54,24 @@ public class DatabaseClass {
     public static int quantity1;
 	public static int inventory;
 	public static double LateFee;
-	public static double fee2;
-	
+	public static int bID;
+	public static int Rented = 0;	
 	public static void main(String[] args) throws ClassNotFoundException {
+		
+		
+		System.out.println("*********************************");
+		System.out.println("*								*");
+		System.out.println("*								*");
+		System.out.println("*	   WELCOME TO THE UNF		*");
+		System.out.println("*			BOOKSTORE			*");
+		System.out.println("*								*");
+		System.out.println("*								*");
+		System.out.println("*								*");
+		System.out.println("*********************************");
 		
 			MainMenu();
 			
 	}
-	
 	public static void MainMenu() {
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Enter 1 for User Access and Enter 2 for Admin Access");
