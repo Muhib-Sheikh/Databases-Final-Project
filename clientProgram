@@ -14,7 +14,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-public class clientProgram {
+public class DatabaseClass {
 
 	static Scanner scanner = new Scanner(System.in);
     public static String host = "jdbc:mysql://cisvm-winsrv-mysql1.unfcsd.unf.edu:3307/group1";
@@ -52,6 +52,8 @@ public class clientProgram {
 	public static String title;
     public static int quantity1;
 	public static int inventory;
+	public static double LateFee;
+	public static double fee2;
 	
 	public static void main(String[] args) throws ClassNotFoundException {
 		
@@ -165,7 +167,7 @@ public class clientProgram {
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.println();
@@ -241,7 +243,7 @@ public class clientProgram {
 	            }
 				
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			System.out.println();
@@ -287,7 +289,7 @@ public class clientProgram {
 					            System.out.println("Price updated\n");	
 						
 						}catch(SQLException ex) {
-						Logger lgr = Logger.getLogger(clientProgram.class.getName());
+						Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 						lgr.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 					break;
@@ -306,7 +308,7 @@ public class clientProgram {
 								
 							
 					}catch(SQLException ex) {
-						Logger lgr = Logger.getLogger(clientProgram.class.getName());
+						Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 						lgr.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 
@@ -327,7 +329,7 @@ public class clientProgram {
 					            System.out.println("Inventory updated");	
 						
 					}catch(SQLException ex) {
-						Logger lgr = Logger.getLogger(clientProgram.class.getName());
+						Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 						lgr.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 					
@@ -349,7 +351,7 @@ public class clientProgram {
 						
 					}
 						catch(SQLException ex) {
-						Logger lgr = Logger.getLogger(clientProgram.class.getName());
+						Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 						lgr.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 
@@ -373,7 +375,7 @@ public class clientProgram {
 						
 					}
 						catch(SQLException ex) {
-						Logger lgr = Logger.getLogger(clientProgram.class.getName());
+						Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 						lgr.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 
@@ -398,7 +400,7 @@ public class clientProgram {
 		            System.out.println("Book deleted from database");
 						
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 				
@@ -479,7 +481,7 @@ public class clientProgram {
 	            System.out.println("Title added\n");	
 		
 		}catch(SQLException ex) {
-		Logger lgr = Logger.getLogger(clientProgram.class.getName());
+		Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 		lgr.log(Level.SEVERE, ex.getMessage(), ex);
 	}
 			
@@ -514,7 +516,7 @@ public class clientProgram {
 				
 				
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			
@@ -527,7 +529,7 @@ public class clientProgram {
 			            s.executeUpdate(query);	
 			
 				}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 				
@@ -546,7 +548,7 @@ public class clientProgram {
 						}
 							
 						}catch(SQLException ex) {
-							Logger lgr = Logger.getLogger(clientProgram.class.getName());
+							Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 							lgr.log(Level.SEVERE, ex.getMessage(), ex);
 						}
 				
@@ -573,7 +575,7 @@ public class clientProgram {
 				}
 		
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			
@@ -632,7 +634,7 @@ public class clientProgram {
 						
 				
 					}catch(SQLException ex) {
-						Logger lgr = Logger.getLogger(clientProgram.class.getName());
+						Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 						lgr.log(Level.SEVERE, ex.getMessage(), ex);
 					}
 			
@@ -668,7 +670,7 @@ public class clientProgram {
 				
 				
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			
@@ -681,7 +683,7 @@ public class clientProgram {
 			            s.executeUpdate(query);	
 			
 				}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 				
@@ -700,7 +702,7 @@ public class clientProgram {
 						}
 							
 						}catch(SQLException ex) {
-							Logger lgr = Logger.getLogger(clientProgram.class.getName());
+							Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 							lgr.log(Level.SEVERE, ex.getMessage(), ex);
 						}
 				
@@ -711,13 +713,82 @@ public class clientProgram {
 	
 	
 	
-	public static void CheckUserBal() {
-		
-		
-		
-		
-		
+		public static void CheckUserBal() {
+			double fee;
+			Scanner scan = new Scanner(System.in);
+			String query = "SELECT users.UserID, FirstName, LastName, Email, LateFee, books.Title, rentals.CheckoutDate, rentals.DueDate\r\n" + 
+					"FROM users\r\n" + 
+					"INNER JOIN rentals on rentals.UserID = users.UserId\r\n" + 
+					"INNER JOIN books on books.BookID = rentals.BookID\r\n" + 
+				    "WHERE users.NumRentals > 0;";
+			//System.out.println(query);
+			int uID;
+			String fName, lName, mail, title;
+			Date checkout, dateDue;
+			double lateFee;
+			System.out.println("USER BALANCES");
+			System.out.println("-------------");
+			try (Connection con = DriverManager.getConnection(host, username, password);
+			        PreparedStatement pst = con.prepareStatement(query);
+			        ResultSet rs = pst.executeQuery()) {
+						
+						System.out.printf("%-10s %-10s %-10s %-25s %-10s %-60s %-15s %-15s\n","User ID","First Name","Last Name","Email","Late Fee","Title","Checkout Date","Due Date");
+						while (rs.next()) {
+							uID = rs.getInt(1);
+							fName = rs.getString(2);
+							lName = rs.getString(3);
+							mail = rs.getString(4);
+							lateFee = rs.getDouble(5);
+							title = rs.getString(6);
+							checkout = rs.getDate(7);
+							dateDue = rs.getDate(8);
+							
+							System.out.printf("%-10d %-10s %-10s %-25s %-10.2f %-60s %-15s %-15s\n",uID,fName,lName,mail,lateFee,title,checkout,dateDue);
+						}
+				
+					}catch(SQLException ex) {
+						Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+						lgr.log(Level.SEVERE, ex.getMessage(), ex);
+					}
+			System.out.println("Enter 1 to apply late fees to a specific user.\n" +
+							   "Enter 2 to return to menu\n");
+			choice = scan.nextInt();
+			
+			if (choice == 1) {
+				
+				System.out.println("Enter user ID you would like to apply late fees to.\n");
+				choice = scan.nextInt();
+				
+				System.out.println("Enter amount you would like to apply to user's account");
+				fee = scan.nextDouble();
+				
+				String query2 = "UPDATE users "+
+								"SET LateFee ="+fee+"" +
+								" WHERE UserID ="+choice+";";
+				try (Connection con = DriverManager.getConnection(host, username, password)){
+					Statement s = con.createStatement();
+		            s.executeUpdate(query2);
+		            System.out.println("Late fee applied to user\n");	
+			
+			}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 	}
+				
+				
+				
+			}
+			
+			else if (choice == 2) {
+				
+				
+				AdminAccess();
+				
+			}
+			
+			CheckUserBal();
+			
+		}
 	//CHANGED
 	public static void GenerateReports() {
 	Scanner scan = new Scanner(System.in);
@@ -752,6 +823,8 @@ public class clientProgram {
 					String title;
 					double revenue;
 					
+					System.out.println("REVENUE REPORT BY TITLE");
+					System.out.println("-----------------------");
 					System.out.printf("%-60s %-10s\n","Title","Revenue");
 					while (rs.next()) {
 						
@@ -764,7 +837,7 @@ public class clientProgram {
 		            }
 					
 				}catch(SQLException ex) {
-					Logger lgr = Logger.getLogger(clientProgram.class.getName());
+					Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 		            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 				System.out.println();
@@ -783,7 +856,8 @@ public class clientProgram {
 		                ResultSet rs = pst.executeQuery()) {
 					String title;
 					double revenue;
-					
+					System.out.println("REVENUE REPORT BY TITLE");
+					System.out.println("-----------------------");
 					System.out.printf("%-60s %-10s\n","Title","Revenue");
 					while (rs.next()) {
 						
@@ -796,7 +870,7 @@ public class clientProgram {
 		            }
 					
 				}catch(SQLException ex) {
-					Logger lgr = Logger.getLogger(clientProgram.class.getName());
+					Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 		            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 				
@@ -833,6 +907,8 @@ public class clientProgram {
 			String genre;
 			double revenue;
 			
+			System.out.println("REVENUE REPORT BY GENRE");
+			System.out.println("-----------------------");
 			System.out.printf("%-35s %-10s\n","Title","Revenue");
 			while (rs.next()) {
 				
@@ -845,7 +921,7 @@ public class clientProgram {
           }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
           lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		System.out.println();
@@ -867,6 +943,8 @@ public class clientProgram {
 			String genre;
 			double revenue;
 			
+			System.out.println("REVENUE REPORT BY GENRE");
+			System.out.println("-----------------------");
 			System.out.printf("%-35s %-10s\n","Title","Revenue");
 			while (rs.next()) {
 				
@@ -879,7 +957,7 @@ public class clientProgram {
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -909,7 +987,8 @@ public class clientProgram {
 	                ResultSet rs = pst.executeQuery()) {
 				
 				double revenue;
-				
+				System.out.println("REVENUE REPORT BY YEAR");
+				System.out.println("----------------------");
 				System.out.printf("%-12s %-10s\n","Year","Revenue");
 				while (rs.next()) {
 					
@@ -922,7 +1001,7 @@ public class clientProgram {
 	            }
 				
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			
@@ -945,6 +1024,8 @@ public class clientProgram {
 					
 					double revenue;
 					
+					System.out.println("REVENUE REPORT BY MONTH");
+					System.out.println("-----------------------");
 					System.out.printf("%-12s %-10s\n","Month","Revenue");
 					while (rs.next()) {
 						
@@ -998,7 +1079,7 @@ public class clientProgram {
 		            }
 					
 				}catch(SQLException ex) {
-					Logger lgr = Logger.getLogger(clientProgram.class.getName());
+					Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 		            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 				System.out.println();
@@ -1018,6 +1099,8 @@ public class clientProgram {
 					
 					double revenue;
 					
+					System.out.println("REVENUE REPORT BY WEEK");
+					System.out.println("----------------------");
 					System.out.printf("%-12s %-10s\n","Week of","Revenue");
 					while (rs.next()) {
 						
@@ -1030,7 +1113,7 @@ public class clientProgram {
 		            }
 					
 				}catch(SQLException ex) {
-					Logger lgr = Logger.getLogger(clientProgram.class.getName());
+					Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 		            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 				System.out.println();
@@ -1171,7 +1254,7 @@ public class clientProgram {
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -1261,7 +1344,7 @@ public class clientProgram {
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -1293,7 +1376,7 @@ public class clientProgram {
             System.out.println("Item added to cart!");
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		while(true) {
@@ -1313,7 +1396,7 @@ public class clientProgram {
 				System.out.println("Item removed from cart");
 		
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -1335,7 +1418,7 @@ public class clientProgram {
 				}
 		
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -1353,7 +1436,7 @@ public class clientProgram {
 	                     System.out.println("Item updated");
 			
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			
@@ -1398,7 +1481,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 				
             }
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -1452,7 +1535,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 								
 				            }
 						}catch(SQLException ex) {
-							Logger lgr = Logger.getLogger(clientProgram.class.getName());
+							Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 						}
 				
@@ -1462,7 +1545,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 					System.out.println("Enter ISBN you would like to rent:\n");
 					ISBN = scan.nextLine();
 					RentCount();
-					if(rentCount >= 2 || rentCount + quantity >= 2){
+					if(rentCount >= 3 || rentCount + quantity >= 3){
 						System.out.println("This quantity exceeds rental limit (2)\n" + "If you currently have 2 rentals checked out return one to rent another one.\n");
 						Cart();
 					}
@@ -1557,7 +1640,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 								
 				            }
 						}catch(SQLException ex) {
-							Logger lgr = Logger.getLogger(clientProgram.class.getName());
+							Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 						}
 						total = sum;
@@ -1585,7 +1668,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 							
 			            }
 					}catch(SQLException ex) {
-						Logger lgr = Logger.getLogger(clientProgram.class.getName());
+						Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 			            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 					}
 					
@@ -1608,13 +1691,13 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 						
 								while (rs.next()) {
 									 quantity = rs.getInt(1);
-									 if (quantity + rentCount > 2) {
+									 if (quantity + rentCount > 3) {
 										 flag = 0;
 									 }
 									
 					            }
 							}catch(SQLException ex) {
-								Logger lgr = Logger.getLogger(clientProgram.class.getName());
+								Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 					            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 							}
 							
@@ -1636,7 +1719,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 											
 							            }
 									}catch(SQLException ex) {
-										Logger lgr = Logger.getLogger(clientProgram.class.getName());
+										Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 							            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 									}
 							
@@ -1651,7 +1734,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 						
 					    CreateRental();
 						}
-					else if (flag == 0 || rentCount > 2) {
+					else if (flag == 0 || rentCount > 3) {
 						System.out.println("Maximum number of rentals [2] currently checked out\n Return a rental to rent a new item.\n");
 						Cart();
 					}
@@ -1684,7 +1767,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 			else if (choice == 5) {
 				UserAccess();
 			}
-			
+			deleteInvoice();
 	}// end Cart()
 	
 	
@@ -1699,7 +1782,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 	        s.executeUpdate(query);
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 	        lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		  
@@ -1727,7 +1810,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
             System.out.println("Item selected as purchased");
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		  
@@ -1736,6 +1819,25 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 	
 	
 	public static void Rent() {
+		
+		String query3 = "SELECT LateFee FROM users\r\n" + 
+				"WHERE UserID = "+ userID +";";
+		
+		try (Connection con = DriverManager.getConnection(host, username, password);
+                PreparedStatement pst = con.prepareStatement(query3);
+                ResultSet rs = pst.executeQuery()) {
+		
+	
+			while (rs.next()) {
+				fee2 = rs.getDouble(1);
+            }
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		
+		if(fee2 == 0) {
+	
 		int Rented = 1;
 	
 	 String query ="INSERT INTO `Invoice` (UserID, BookID, Quantity, Price, Rented, Total) VALUES (\r\n" + 
@@ -1761,8 +1863,13 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
         System.out.println("Item selected as rented");
 		
 	}catch(SQLException ex) {
-		Logger lgr = Logger.getLogger(clientProgram.class.getName());
+		Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
         lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+	  
+		}
+		else {
+			System.out.println("Outstanding late fee! Pay your balance to rent");
 		}
 	  
 	}// end Rented
@@ -1781,7 +1888,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
             }
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -1813,7 +1920,7 @@ public static void CreateOrder() {
 		
 				
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 		        lgr.log(Level.SEVERE, ex.getMessage(), ex);
 				}	
 			
@@ -1830,7 +1937,7 @@ public static void CreateOrder() {
 	            }
 				
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			
@@ -1872,7 +1979,7 @@ public static void CreateOrder() {
 	            }
 				
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			
@@ -1884,7 +1991,7 @@ public static void CreateOrder() {
 		       	   		        
 				
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 		        lgr.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 			
@@ -1906,7 +2013,7 @@ public static void CreateOrder() {
 //CHANGED
 public static void CreateRental() {
 	
-	if (rented == 0 && flag == 1) {
+	if (rented == 1 && flag == 1) {
 	
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     Date date = new Date();
@@ -1926,11 +2033,11 @@ public static void CreateRental() {
 					
 	            }
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		
-		if(rentCount > 2 || rentCount + quantity > 2){
+		if(rentCount > 3 || rentCount + quantity > 3){
 			System.out.println("Max number of rentals (2) checked out.\n Return one to rent another.\n");
 			Cart();
 			
@@ -1969,7 +2076,7 @@ public static void CreateRental() {
 					
 	            }
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			
@@ -1994,7 +2101,7 @@ public static void CreateRental() {
             s.executeUpdate(query);
 
         }catch(SQLException ex) {
-            Logger lgr = Logger.getLogger(clientProgram.class.getName());
+            Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
             }
 
@@ -2041,7 +2148,7 @@ public static void Return () {
 				System.out.printf("%-85s %-15s %-10s \t%-15s\n", title, ISBN , checkoutDate, dueDate);
             }
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -2066,7 +2173,7 @@ public static void Return () {
             s.executeUpdate(query3);
 
         }catch(SQLException ex) {
-            Logger lgr = Logger.getLogger(clientProgram.class.getName());
+            Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
             }
 		System.out.println("" + title + " returned");
@@ -2100,7 +2207,7 @@ public static void Return () {
 				System.out.printf("%-85s %-15s %-8s %-8s\t%-15s\n", title, ISBN , price, quantity1 ,orderDate);
             }
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -2123,7 +2230,7 @@ public static void Return () {
 				
             }
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 	
@@ -2151,7 +2258,7 @@ public static void Return () {
 	            s.executeUpdate(query8);
 
 	        }catch(SQLException ex) {
-	            Logger lgr = Logger.getLogger(clientProgram.class.getName());
+	            Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 	            }	
 		}
@@ -2173,7 +2280,7 @@ public static void Return () {
 	            s.executeUpdate(query10);
 
 	        }catch(SQLException ex) {
-	            Logger lgr = Logger.getLogger(clientProgram.class.getName());
+	            Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 	            }	
 			System.out.println("Item(s) returned");
@@ -2193,9 +2300,58 @@ public static void Return () {
 	 
 }	//end RETURN
 	public static void Balance () {
-		//print balance and late fees
-		//let user pay one or both
-	}
+		Scanner scan = new Scanner(System.in);
+		int userChoice;
+		String query = "SELECT LateFee\r\n" + 
+				"FROM users\r\n" + 
+				"WHERE UserID = " + userID + ";";
+		System.out.println("BALANCE");
+		System.out.println("-------");
+		try (Connection con = DriverManager.getConnection(host, username, password);
+                PreparedStatement pst = con.prepareStatement(query);
+                ResultSet rs = pst.executeQuery()) {
+	
+			while (rs.next()) {
+				
+			LateFee = rs.getDouble(1);
+				
+            }
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		
+		System.out.println(LateFee);
+		
+		System.out.println("Enter 1 to pay late fee\n" + "Enter 2 to return to menu\n");
+		
+		userChoice = scan.nextInt();
+		
+		if(userChoice == 1) {
+			String query2 = "UPDATE users\r\n" + 
+					"SET LateFee = 0\r\n" + 
+					"WHERE UserID = " + userID + ";";
+			
+			try  (Connection con = DriverManager.getConnection(host, username, password)) {
+
+	            Statement s = con.createStatement();
+	            s.executeUpdate(query2);
+	           
+
+	        }catch(SQLException ex) {
+	            Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+	            }	
+			
+			Balance();
+			
+			
+		}
+		else if(userChoice == 2) {
+			UserAccess();
+		}
+		
+	}//end balance
 	
 	public static void CreateCustomer() {
 		Scanner scan2 = new Scanner(System.in);
@@ -2236,7 +2392,7 @@ public static void Return () {
 			        s.executeUpdate(query);
 					
 				}catch(SQLException ex) {
-					Logger lgr = Logger.getLogger(clientProgram.class.getName());
+					Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 			        lgr.log(Level.SEVERE, ex.getMessage(), ex);
 					}
 			
@@ -2282,7 +2438,7 @@ public static void Return () {
 			        s.executeUpdate(query);		   
 			        
 				}catch(SQLException ex) {
-					Logger lgr = Logger.getLogger(clientProgram.class.getName());
+					Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 			        lgr.log(Level.SEVERE, ex.getMessage(), ex);
 					}
 			
@@ -2366,7 +2522,7 @@ public static void Return () {
 				}
 			//scan.close();
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		while(true) {
@@ -2436,7 +2592,7 @@ public static void Return () {
             System.out.println("Account Created!");
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		//scan.close();
@@ -2454,7 +2610,7 @@ public static void Return () {
             System.out.println("Guest Account Created!");
 			
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -2473,7 +2629,7 @@ public static void Return () {
 
 					}
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 			
@@ -2513,11 +2669,11 @@ public static void Return () {
 					}//end while
 			//scan.close();
 			}catch(SQLException ex) {
-				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		
 	}// end Check email
 	
 	
-}//end clientProgram
+}//end DatabaseClass
