@@ -56,6 +56,7 @@ public class DatabaseClass {
 	public static double LateFee;
 	public static int bID;
 	public static int Rented = 0;	
+	public static double fee2;
 	public static void main(String[] args) throws ClassNotFoundException {
 		
 		
