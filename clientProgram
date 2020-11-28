@@ -148,6 +148,7 @@ public class DatabaseClass {
 			String title, name, isbn1, price, rentPrice, genre, pub, condition, format, inventory;
 			String aisle, release;
 			System.out.printf("%-90s %-30s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s %-20s %7s %-1s\n","Title","Name","ISBN","Price","Rental Price","Genre","Publisher","Condition","Format","Inv","Aisle Number","Release", "");
+			System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 			while (rs.next()) {
 				
 				title = rs.getString(1);
@@ -223,7 +224,9 @@ public class DatabaseClass {
 	                ResultSet rs = pst.executeQuery()) {
 				String title, name, isbn1, price, rentPrice, genre, pub, condition, format, inventory;
 				String aisle, release;
+				
 				System.out.printf("%-90s %-30s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s %-20s %7s %-1s\n","Title","Name","ISBN","Price","Rental Price","Genre","Publisher","Condition","Format","Inv","Aisle Number","Release", "");
+				System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 				while (rs.next()) {
 					
 					title = rs.getString(1);
@@ -1229,6 +1232,7 @@ public class DatabaseClass {
 			int var10;
 			
 			System.out.printf("%-90s %-30s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s %-1s\n","Title","Name","ISBN","Price","Rental Price","Genre","Publisher","Condition","Format","Inv", "");
+			System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 			while (rs.next()) {
 				
 				var1 = rs.getString(1);
@@ -1470,7 +1474,9 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 			String title, ISBN;
 			int quantity;
 			double price, rentalPrice;	
-	
+			
+			System.out.println("CART");
+			System.out.println("----");
 			while (rs.next()) {
 				title = rs.getString(1);
 				ISBN = rs.getString(2);
@@ -1486,11 +1492,11 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 		}
 		
 		
-		System.out.println("\nIf you would like to remove an item enter 1\n"
-						 + "If you would like to update the quantity of an item enter 2\n"
-						 + "If you would like to rent/purchase an item enter 3\n"
-						 + "To continue to check out enter 4\n"
-						 + "To return to menu enter 5\n");
+		System.out.println("\nEnter 1 to remove an item\n"
+						 + "Enter 2 to update the quantity of an item\n"
+						 + "Enter 3 to select which items to rent/purchase\n"
+						 + "Enter 4 to proceed to checkout\n"
+						 + "Enter 5 to return to menu\n");
 		choice = scanner.nextInt();
 		
 			if (choice == 1) {
@@ -1621,6 +1627,8 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 						+ " GROUP BY Invoice.BookID;\r\n";
 			
 				//System.out.println("userEmail: " + userEmail);
+				System.out.println("SELECTED ITEMS");
+				System.out.println("---------------");
 				System.out.printf("%-85s %-10s %-10s\n", "Title", "Quantity",  "Price");
 					
 						try (Connection con = DriverManager.getConnection(host, username, password);
@@ -1799,7 +1807,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 				"	(SELECT Price FROM `shopping cart` WHERE ISBN IN ('" + ISBN +"') AND UserID IN ('"+ userID +"')),\r\n" + 
 				    Rented + "," +
 				    "(SELECT sum(Quantity * Price) FROM `shopping cart` WHERE ISBN IN ('" + ISBN + "') AND UserID IN ('"+ userID +"')));";
-		System.out.println(query);
+		//System.out.println(query);
 		
 		  try  (Connection con = DriverManager.getConnection(host, username, password)) {
 			  
@@ -2093,7 +2101,7 @@ public static void CreateRental() {
                 "    '"+ date5 +"',\r\n" + 
                     "(SELECT Price FROM Invoice WHERE UserID IN (" + userID + ") AND Rented = 1)\r\n );";
         
-        System.out.println(query);
+        //System.out.println(query);
        
         try  (Connection con = DriverManager.getConnection(host, username, password)) {
 
@@ -2272,7 +2280,7 @@ public static void Return () {
 					"SET Quantity = Quantity - '"+ userQuantity +"'\r\n" + 
 					"WHERE ISBN = '" + userString +"' AND Quantity = "+ quantity1 +" ;";
 			
-			System.out.println(query10);
+			//System.out.println(query10);
 			try  (Connection con = DriverManager.getConnection(host, username, password)) {
 
 	            Statement s = con.createStatement();
