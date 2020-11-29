@@ -59,7 +59,15 @@ public class DatabaseClass {
 	public static void main(String[] args) throws ClassNotFoundException {
 		
 		
-		System.out.println("WELCOME TO THE UNF BOOKSTORE");
+		System.out.println("*****************************************************************");
+		System.out.println("*								*");
+		System.out.println("*								*");
+		System.out.println("*	   \t\tWELCOME TO THE UNF			*");
+		System.out.println("*			    BOOKSTORE				*");
+		System.out.println("*								*");
+		System.out.println("*								*");
+		System.out.println("*								*");
+		System.out.println("*****************************************************************");
 		
 			MainMenu();
 			
@@ -2179,6 +2187,24 @@ public static void Return () {
 	choice = Integer.parseInt(scan.nextLine());
 	
 	if(choice == 1) {
+		String query7 = "SELECT NumRentals \r\n" + 
+				"FROM users\r\n" + 
+				"WHERE UserID ="+userID+";\r\n";
+		try (Connection con = DriverManager.getConnection(host, username, password);
+                PreparedStatement pst = con.prepareStatement(query7);
+                ResultSet rs = pst.executeQuery()) {
+	
+			while (rs.next()) {
+				choice = rs.getInt(1);
+            }
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		
+		
+		
+		
 		String query = "SELECT books.Title, books.ISBN,rentals.CheckoutDate, rentals.DueDate\r\n" + 
 				"FROM rentals\r\n" + 
 				"INNER JOIN books on books.BookID = rentals.BookID\r\n" + 
@@ -2186,6 +2212,13 @@ public static void Return () {
 		//System.out.println(query);
 		System.out.println("CURRENT RENTALS");
 		System.out.println("---------------");
+		if (choice <= 0) {
+			System.out.println("You currently have no rentals.\n");
+			Return();
+		}
+		
+		else {
+		
 		System.out.printf("%-85s %-15s %-10s     %-15s\n", "Title", "ISBN"  ,"Checkout Date",  "Due Date");
 		try (Connection con = DriverManager.getConnection(host, username, password);
                 PreparedStatement pst = con.prepareStatement(query);
@@ -2200,13 +2233,30 @@ public static void Return () {
 				System.out.printf("%-85s %-15s %-10s \t%-15s\n", title, ISBN , checkoutDate, dueDate);
             }
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
 		System.out.println("\nEnter the ISBN of the book you wish to return");
 		userString = scan.nextLine();
 		
+		
+		String query4 = "SELECT books.Title\r\n" +
+						"WHERE ISBN = '" + userString +"';";
+		
+		try (Connection con = DriverManager.getConnection(host, username, password);
+                PreparedStatement pst = con.prepareStatement(query);
+                ResultSet rs = pst.executeQuery()) {
+	
+			while (rs.next()) {
+				title = rs.getString(1);
+            }
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		
+								
 		String query2 = "DELETE rentals\r\n" + 
 				"FROM rentals\r\n" + 
 				"INNER JOIN books ON books.BookID = rentals.BookID\r\n" + 
@@ -2216,7 +2266,7 @@ public static void Return () {
 				"SET NumRentals = NumRentals - 1 " +
 				"WHERE UserID = " + userID + ";";
 		//System.out.println(query3);
-		String query4 = "";
+		
 		
 		try  (Connection con = DriverManager.getConnection(host, username, password)) {
 
@@ -2225,12 +2275,12 @@ public static void Return () {
             s.executeUpdate(query3);
 
         }catch(SQLException ex) {
-            Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+            Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
             }
 		System.out.println("" + title + " returned");
 		Return();
-				
+		}		
 	}
 	
 	 if(choice == 2) {
@@ -2259,7 +2309,7 @@ public static void Return () {
 				System.out.printf("%-85s %-15s %-8s %-8s\t%-15s\n", title, ISBN , price, quantity1 ,orderDate);
             }
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -2282,7 +2332,7 @@ public static void Return () {
 				
             }
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 	
@@ -2310,7 +2360,7 @@ public static void Return () {
 	            s.executeUpdate(query8);
 
 	        }catch(SQLException ex) {
-	            Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+	            Logger lgr = Logger.getLogger(clientProgram.class.getName());
 	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 	            }	
 		}
@@ -2332,7 +2382,7 @@ public static void Return () {
 	            s.executeUpdate(query10);
 
 	        }catch(SQLException ex) {
-	            Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+	            Logger lgr = Logger.getLogger(clientProgram.class.getName());
 	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 	            }	
 			System.out.println("Item(s) returned");
@@ -2351,6 +2401,8 @@ public static void Return () {
 		}
 	 
 }	//end RETURN
+
+
 	public static void Balance () {
 		Scanner scan = new Scanner(System.in);
 		int userChoice;
