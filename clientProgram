@@ -22,7 +22,6 @@ public class DatabaseClass {
     //String host2 = "jdbc:mysql://localhost:3306/group1";
     public static String username = "n01442744";
     public static String password = "V22d9569";
-    
     public static String userEmail = null;
     public static String userID = null;
     public static String guest = null;
@@ -60,15 +59,7 @@ public class DatabaseClass {
 	public static void main(String[] args) throws ClassNotFoundException {
 		
 		
-		System.out.println("*********************************");
-		System.out.println("*								*");
-		System.out.println("*								*");
-		System.out.println("*	   WELCOME TO THE UNF		*");
-		System.out.println("*			BOOKSTORE			*");
-		System.out.println("*								*");
-		System.out.println("*								*");
-		System.out.println("*								*");
-		System.out.println("*********************************");
+		System.out.println("WELCOME TO THE UNF BOOKSTORE");
 		
 			MainMenu();
 			
@@ -137,6 +128,7 @@ public class DatabaseClass {
 	public static void AdminSearch() {
 		Scanner scan = new Scanner(System.in);
 		System.out.print("Search by title, genre or author:\n");
+		System.out.println("Or press enter to view all books in inventory");
 		userString = scan.nextLine();
 		//System.out.println(userString);
 		//System.out.println("WHERE authors.FirstName LIKE \'" + userString + "\' OR authors.LastName LIKE \'" + userString + "\' OR books.Title LIKE \'" + userString + "\' OR books.ISBN LIKE \'" + userString + "\' OR genre.GenreName LIKE \'" + userString + "\'");
@@ -160,7 +152,7 @@ public class DatabaseClass {
 			String title, name, isbn1, price, rentPrice, genre, pub, condition, format, inventory;
 			String aisle, release;
 			System.out.printf("%-90s %-30s %-20s %-10s %-14s %-30s %-40s %-15s %-16s %-10s %-20s %7s %-1s\n","Title","Name","ISBN","Price","Rental Price","Genre","Publisher","Condition","Format","Inv","Aisle Number","Release", "");
-			System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+			System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 			while (rs.next()) {
 				
 				title = rs.getString(1);
@@ -418,7 +410,7 @@ public class DatabaseClass {
 			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
-				
+			UpdateInventory();
 				
 			}
 			
@@ -1478,6 +1470,8 @@ String query = "SELECT DISTINCT `shopping cart`.BookTitle, `shopping cart`.ISBN 
 		"FROM `shopping cart`\r\n" + 
 		"WHERE UserID = '" + userID +"'\r\n" + 
 		"GROUP BY `shopping cart`.BookID;";
+System.out.println("CART");
+System.out.println("----");
 System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantity",  "Price", "Rental Price");
 	
 		try (Connection con = DriverManager.getConnection(host, username, password);
@@ -1497,7 +1491,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 				
             }
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -1551,7 +1545,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 								
 				            }
 						}catch(SQLException ex) {
-							Logger lgr = Logger.getLogger(clientProgram.class.getName());
+							Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 						}
 				
@@ -1634,6 +1628,8 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 						+ " GROUP BY Invoice.BookID;\r\n";
 			
 				//System.out.println("userEmail: " + userEmail);
+				System.out.println("ITEMS SELECTED");
+				System.out.println("--------------");
 				System.out.printf("%-85s %-10s %-10s\n", "Title", "Quantity",  "Price");
 					
 						try (Connection con = DriverManager.getConnection(host, username, password);
@@ -1653,7 +1649,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 								
 				            }
 						}catch(SQLException ex) {
-							Logger lgr = Logger.getLogger(clientProgram.class.getName());
+							Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 				            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 						}
 						total = sum;
@@ -1681,7 +1677,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 							
 			            }
 					}catch(SQLException ex) {
-						Logger lgr = Logger.getLogger(clientProgram.class.getName());
+						Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 			            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 					}
 					
@@ -1710,7 +1706,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 									
 					            }
 							}catch(SQLException ex) {
-								Logger lgr = Logger.getLogger(clientProgram.class.getName());
+								Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 					            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 							}
 							
@@ -1732,7 +1728,7 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 											
 							            }
 									}catch(SQLException ex) {
-										Logger lgr = Logger.getLogger(clientProgram.class.getName());
+										Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 							            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 									}
 							
@@ -1775,13 +1771,13 @@ System.out.printf("%-85s %-15s %-10s %-10s %-20s \n", "Title", "ISBN"  ,"Quantit
 					            	
 						
 							}catch(SQLException ex) {
-								Logger lgr = Logger.getLogger(clientProgram.class.getName());
+								Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 								lgr.log(Level.SEVERE, ex.getMessage(), ex);
 							}	 
 							
 			            }
 					}catch(SQLException ex) {
-						Logger lgr = Logger.getLogger(clientProgram.class.getName());
+						Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 			            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 					}
 					
