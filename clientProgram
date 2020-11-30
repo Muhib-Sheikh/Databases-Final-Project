@@ -2446,7 +2446,7 @@ public static void Return () {
 	
 	
 	
-	 if(choice == 2) {
+	  if(choice == 2) {
 		
 		String query5 = "SELECT books.Title, books.ISBN, `order item`.Price,`order item`.Quantity ,`order item`.OrderDate\r\n" + 
 				"FROM `order item`\r\n" + 
@@ -2472,7 +2472,7 @@ public static void Return () {
 				System.out.printf("%-85s %-15s %-8s %-8s\t%-15s\n", title, ISBN , price, quantity1 ,orderDate);
             }
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
@@ -2494,20 +2494,80 @@ public static void Return () {
 
             }
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
-		
-		
 		if (formatID == 5 || formatID == 8) {
-			
 			System.out.println("Digital books are inelgible for returns.");
+			Return();
 		}
 		
-		
-		
 		else {
+		
+			String query = "SELECT `order item`.OrderDate\r\n" + 
+					"FROM `order item` \r\n" + 
+					"INNER JOIN books ON books.BookID = `order item`.BookID\r\n" + 
+					"INNER JOIN orders ON orders.OrderID = `order item`.OrderID\r\n" + 
+					"INNER JOIN customers ON customers.CustomerID = orders.CustomerID\r\n" + 
+					"INNER JOIN users ON users.UserID = customers.UserID\r\n" + 
+					"WHERE books.ISBN = '" + userString + "' AND users.userID = " + userID + ";";
+
+				//System.out.println(query);
+		        try (Connection con = DriverManager.getConnection(host, username, password);
+
+
+		              PreparedStatement pst = con.prepareStatement(query);
+		              ResultSet rs = pst.executeQuery()) {
+
+
+
+		            while (rs.next()) {
+		                test = rs.getDate(1);
+
+		          }
+
+		        }catch(SQLException ex) {
+		            Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
+		          lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		        }
+
+		        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+				Date date = new Date();
+				String date1 = df.format(date);
+				Date utilDate;
+				
+			   
+				
+				try {
+					utilDate = new SimpleDateFormat("yyyy-MM-dd").parse(date1);
+					java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+					System.out.println(sqlDate);
+					
+				    java.sql.Date sqlDat = new java.sql.Date(test.getTime());
+				    
+				    String DateDue = df.format(sqlDate);
+				    String today = df.format(sqlDat);
+				    
+				    LocalDate dateBefore = LocalDate.parse(DateDue);
+					LocalDate dateAfter = LocalDate.parse(today);
+				    
+				    noOfDaysBetween = ChronoUnit.DAYS.between(dateAfter, dateBefore);
+				    
+					
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        
+		        if(noOfDaysBetween > 30) {
+		        	System.out.println("The return period for this book has expired. Cannot return.");
+		        	Return();
+		        }
+		        else {
+		        	
+		        
+		        
 		
 		String query6 = "SELECT Quantity\r\n" + 
 				"FROM `order item`\r\n" + 
@@ -2524,7 +2584,7 @@ public static void Return () {
 				
             }
 		}catch(SQLException ex) {
-			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 	
@@ -2552,7 +2612,7 @@ public static void Return () {
 	            s.executeUpdate(query8);
 
 	        }catch(SQLException ex) {
-	            Logger lgr = Logger.getLogger(clientProgram.class.getName());
+	            Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 	            }	
 			
@@ -2576,15 +2636,16 @@ public static void Return () {
 	            s.executeUpdate(query10);
 
 	        }catch(SQLException ex) {
-	            Logger lgr = Logger.getLogger(clientProgram.class.getName());
+	            Logger lgr = Logger.getLogger(DatabaseClass.class.getName());
 	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 	            }	
 			System.out.println("Item(s) returned");
 			Return();
 		}
 		}
+		}
 			
-	}// END IF CHOICE == 2
+	}//end choice 2
 	
 	 if(choice == 3) {
 			UserAccess();
