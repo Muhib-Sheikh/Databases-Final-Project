@@ -13,6 +13,8 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class clientProgram {
 
@@ -56,6 +58,11 @@ public class clientProgram {
 	public static int bID;
 	public static int Rented = 0;	
 	public static double fee2;
+	public static Date test;
+	public static long noOfDaysBetween;
+	
+	
+	
 	public static void main(String[] args) throws ClassNotFoundException {
 		
 		
@@ -2068,7 +2075,7 @@ public static void CreateOrder() {
 			e.printStackTrace();
 		}
 		
-		System.out.println("Transaction confirmed.\n Thank you for shopping at the UNF Bookstore! Swoop!");
+		System.out.println("Transaction confirmed.\nThank you for shopping at the UNF Bookstore! Swoop!");
 }
 	
 	else {
@@ -2220,6 +2227,7 @@ public static void Return () {
 	choice = Integer.parseInt(scan.nextLine());
 	
 	if(choice == 1) {
+		
 		String query7 = "SELECT NumRentals \r\n" + 
 				"FROM users\r\n" + 
 				"WHERE UserID ="+userID+";\r\n";
@@ -2245,6 +2253,8 @@ public static void Return () {
 		//System.out.println(query);
 		System.out.println("CURRENT RENTALS");
 		System.out.println("---------------");
+		
+		
 		if (choice <= 0) {
 			System.out.println("You currently have no rentals.\n");
 			Return();
@@ -2276,11 +2286,130 @@ public static void Return () {
 		
 		
 		
+		String query12 = "SELECT DueDate\r\n" + 
+		  		"FROM Rentals \r\n" + 
+		  		"INNER JOIN books on books.BookID = rentals.BookID\r\n" + 
+		  		"WHERE books.ISBN = '"+userString+"' AND userID = "+userID+";";
+		  
+		  
+		    try (Connection con = DriverManager.getConnection(host, username, password);
+		    		
+		    		
+	              PreparedStatement pst = con.prepareStatement(query12);
+	              ResultSet rs = pst.executeQuery()) {
+		    		
+			
+				
+				while (rs.next()) {
+					test = rs.getDate(1);	
+				
+	          }
+				
+			}catch(SQLException ex) {
+				Logger lgr = Logger.getLogger(clientProgram.class.getName());
+	          lgr.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		    
+		    
+		    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			Date date = new Date();
+			String date1 = df.format(date);
+			Date utilDate;
+			
+		   
+			
+			try {
+				utilDate = new SimpleDateFormat("yyyy-MM-dd").parse(date1);
+				java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+				System.out.println(sqlDate);
+				
+			    java.sql.Date sqlDat = new java.sql.Date(test.getTime());
+			    
+			    String DateDue = df.format(sqlDate);
+			    String today = df.format(sqlDat);
+			    
+			    LocalDate dateBefore = LocalDate.parse(DateDue);
+				LocalDate dateAfter = LocalDate.parse(today);
+			    
+			    noOfDaysBetween = ChronoUnit.DAYS.between(dateAfter, dateBefore);
+			    
+				
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if (noOfDaysBetween > 15 ) {
+		    	
+		    	 String query13 = "SELECT Price\r\n" + 
+					  		"FROM books \r\n" + 
+					  		"WHERE ISBN = '"+userString+"';";
+					  
+					  
+					    try (Connection con = DriverManager.getConnection(host, username, password);
+					    		
+					    		
+				              PreparedStatement pst = con.prepareStatement(query13);
+				              ResultSet rs = pst.executeQuery()) {
+					    		
+							while (rs.next()) {
+								LateFee = rs.getDouble(1);	
+							
+				          }
+							
+						}catch(SQLException ex) {
+							Logger lgr = Logger.getLogger(clientProgram.class.getName());
+				          lgr.log(Level.SEVERE, ex.getMessage(), ex);
+						}
+				    
+				    
+					    String query2 = "UPDATE users "+
+								"SET LateFee = LateFee +"+LateFee+"" +
+								" WHERE UserID ="+userID+";";
+				try (Connection con = DriverManager.getConnection(host, username, password)){
+					Statement s = con.createStatement();
+		            s.executeUpdate(query2);
+		            
+			
+			}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+	}
+		    	
+				System.out.println("Days Late: " + noOfDaysBetween);
+		    	System.out.println("This book is over 15 days late. You must pay the full price("+LateFee+") of the book.\nA late fee for the price of the book has been added to your account. You must pay this before you can rent another.\n\n");
+		    	String query5 = "DELETE rentals\r\n" + 
+						"FROM rentals\r\n" + 
+						"INNER JOIN books ON books.BookID = rentals.BookID\r\n" + 
+						"WHERE ISBN = '" + userString +"';";
+				
+				String query6 = "UPDATE users\r\n" + 
+						"SET NumRentals = NumRentals - 1 " +
+						"WHERE UserID = " + userID + ";";
+				//System.out.println(query3);
+				
+				
+				try  (Connection con = DriverManager.getConnection(host, username, password)) {
+
+		            Statement s = con.createStatement();
+		            s.executeUpdate(query5);
+		            s.executeUpdate(query6);
+
+		        }catch(SQLException ex) {
+		            Logger lgr = Logger.getLogger(clientProgram.class.getName());
+		            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		            }
+				System.out.println("You do not need to to return the book.");
+				UserAccess();
+		    	
+		    }
+		   
+		    
+		    
+		    
+			else { 
+			
 		
-		
-		
-		
-								
 		String query2 = "DELETE rentals\r\n" + 
 				"FROM rentals\r\n" + 
 				"INNER JOIN books ON books.BookID = rentals.BookID\r\n" + 
@@ -2304,8 +2433,18 @@ public static void Return () {
             }
 		System.out.println("Book returned");
 		Return();
-		}		
-	}
+		
+			}
+			}	
+			
+		
+	}// END IF CHOICE == 1
+	
+	
+	
+	
+	
+	
 	
 	 if(choice == 2) {
 		
@@ -2359,10 +2498,14 @@ public static void Return () {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
+		
+		
 		if (formatID == 5 || formatID == 8) {
 			
 			System.out.println("Digital books are inelgible for returns.");
 		}
+		
+		
 		
 		else {
 		
@@ -2441,7 +2584,7 @@ public static void Return () {
 		}
 		}
 			
-	}
+	}// END IF CHOICE == 2
 	
 	 if(choice == 3) {
 			UserAccess();
