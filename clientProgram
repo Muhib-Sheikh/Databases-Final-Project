@@ -134,10 +134,10 @@ public class clientProgram {
 		}
 	}
 	public static void AdminSearch() {
-		Scanner scan = new Scanner(System.in);
+		Scanner scan6 = new Scanner(System.in);
 		System.out.print("Search by title, genre or author:\n");
 		System.out.println("Or press enter to view all books in inventory");
-		userString = scan.nextLine();
+		userString = scan6.nextLine();
 		//System.out.println(userString);
 		//System.out.println("WHERE authors.FirstName LIKE \'" + userString + "\' OR authors.LastName LIKE \'" + userString + "\' OR books.Title LIKE \'" + userString + "\' OR books.ISBN LIKE \'" + userString + "\' OR genre.GenreName LIKE \'" + userString + "\'");
 		// SQL code here to search tables for books by input.
@@ -185,7 +185,7 @@ public class clientProgram {
 		}
 		System.out.println();
 		System.out.println("1 to Continue Searching\n" + "2 to Return to Menu\n");		
-		choice = scan.nextInt();
+		choice = scan6.nextInt();
 		if(choice == 1) {
 			AdminSearch();
 		}
@@ -196,7 +196,7 @@ public class clientProgram {
 			while(choice != 1 || choice != 2) {
 				System.out.println("Invalid Option!\n");
 				System.out.println("1 to Continue Searching\n" + "2 to Return to Menu\n");
-				choice = scan.nextInt();
+				choice = scan6.nextInt();
 				if(choice == 1) {
 					Search();
 				}
@@ -206,7 +206,7 @@ public class clientProgram {
 			}
 		}
 		
-		scan.close();
+		
 	}//end AdminSearch
 	
 	public static void UpdateInventory() {
@@ -459,8 +459,7 @@ public class clientProgram {
 				System.out.println("Enter 1,2, or 3");
 				UpdateInventory();
 			}
-			scanme.close();
-			scan.close();
+			
 			UpdateInventory();
 		}//end UpdateInventory
 		
@@ -509,16 +508,15 @@ public class clientProgram {
 		lgr.log(Level.SEVERE, ex.getMessage(), ex);
 	}
 			
-			scan.close();
-			id.close();
+			
 		}
 		
 		
 		public static void getAuthor() {
-			Scanner scan1 = new Scanner(System.in);
+			Scanner scan = new Scanner(System.in);
 			String authorName;
 			System.out.println("Enter the first and last name of author or organization name");
-			authorName = scan1.nextLine();
+			authorName = scan.nextLine();
 			
 			String query = "SELECT `AuthorID`, `Name` FROM authors;";
 			int authID;
@@ -577,7 +575,7 @@ public class clientProgram {
 						}
 				
 				}
-			scan1.close();
+			
 			}// end getAuthor()
 			
 			
@@ -630,7 +628,7 @@ public class clientProgram {
 			else if (genreID == 17) {
 				aisleNum = 8;
 			}
-			scan.close();
+			
 		}//end displayGenre
 		
 		
@@ -664,7 +662,7 @@ public class clientProgram {
 			
 			System.out.println("Enter the format ID number that pertains to the Format and Condition of the book you wish to add.");
 			formatID = format.nextInt();
-			format.close();
+			
 		}//end DisplayFormats
 		
 		
@@ -732,7 +730,7 @@ public class clientProgram {
 				
 				}
 			
-			scan1.close();
+			
 		}//end getPublisher
 	
 	
@@ -2272,8 +2270,13 @@ public static void Return () {
             lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		
+		
 		System.out.println("\nEnter the ISBN of the book you wish to return");
 		userString = scan.nextLine();
+		
+		
+		
+		
 		
 		
 		
@@ -2338,6 +2341,31 @@ public static void Return () {
 		userString = scan.nextLine();
 		//update inventory after
 		
+		
+		String query11 = "SELECT FormatID \r\n" + 
+				"FROM books\r\n" + 
+				"WHERE ISBN = '" + userString + "';";
+		
+		try (Connection con = DriverManager.getConnection(host, username, password);
+                PreparedStatement pst = con.prepareStatement(query11);
+                ResultSet rs = pst.executeQuery()) {
+	
+			while (rs.next()) {
+			formatID = rs.getInt(1);	
+
+            }
+		}catch(SQLException ex) {
+			Logger lgr = Logger.getLogger(clientProgram.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		
+		if (formatID == 5 || formatID == 8) {
+			
+			System.out.println("Digital books are inelgible for returns.");
+		}
+		
+		else {
+		
 		String query6 = "SELECT Quantity\r\n" + 
 				"FROM `order item`\r\n" + 
 				"INNER JOIN books ON books.BookID = `order item`.BookID\r\n" + 
@@ -2384,6 +2412,8 @@ public static void Return () {
 	            Logger lgr = Logger.getLogger(clientProgram.class.getName());
 	            lgr.log(Level.SEVERE, ex.getMessage(), ex);
 	            }	
+			
+			System.out.println("Item(s) returned.\n");
 		}
 		else if(userQuantity < quantity1) {
 			String query9 = "UPDATE books\r\n" + 
@@ -2409,7 +2439,7 @@ public static void Return () {
 			System.out.println("Item(s) returned");
 			Return();
 		}
-		
+		}
 			
 	}
 	
